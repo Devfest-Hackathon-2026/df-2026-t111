@@ -17,12 +17,12 @@
 - 審査基準：Google 技術の活用 / プロダクトの完成度 / 社会課題の解決力 / ピッチ
 - **動くものを優先する。作り込みすぎない。**
 
-## 2. 技術スタック（仮。確定したら更新する）
+## 2. 技術スタック（確定）
 
 | 用途 | 技術 |
 |---|---|
-| フレームワーク | Next.js（App Router）+ TypeScript |
-| スタイル | Tailwind CSS |
+| フレームワーク | Next.js 16（App Router）+ React 19 + TypeScript |
+| スタイル | Tailwind CSS v4 |
 | AI | Gemini（Vertex AI 経由。SDK は `@google/genai`） |
 | ログイン | Firebase Authentication（Google ログイン） |
 | DB | Cloud Firestore（asia-northeast1） |
