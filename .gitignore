@@ -32,3 +32,9 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 *.log
+.env*
+*-key.json
+CLAUDE.md
+CLAUDE.local.md
+.claude/settings.local.json
+!.env.example
