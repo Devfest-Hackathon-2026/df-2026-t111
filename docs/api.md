@@ -11,8 +11,8 @@
 ## モックモードと Gemini 本実装
 
 3 つの API は Gemini（Vertex AI）による本実装に対応しています。
-環境変数 `USE_MOCK_API=true`（デフォルト）のときは、Gemini を呼び出さずに固定のモック結果を返します。
-Gemini を呼び出す場合は `.env.local` で `USE_MOCK_API=false` に設定し、`gcloud auth application-default login` を完了させてください。
+環境変数 `USE_MOCK_API=true` のときは、Gemini を呼び出さずに固定のモック結果を返します。
+Gemini を呼び出す場合は `.env.local` で `USE_MOCK_API=false` に設定（または環境変数を削除）し、`gcloud auth application-default login` を完了させてください。
 
 ※ 本実装でも入出力の型や仕様は同一です。
 

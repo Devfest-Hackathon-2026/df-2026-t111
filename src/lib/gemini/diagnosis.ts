@@ -81,23 +81,33 @@ ${answersText}
 
   const parsed = JSON.parse(text) as DiagnosisResponse;
 
-  // 簡単なバリデーション
-  const validArts: PerformingArt[] = ["nogaku", "ningyoJoruri", "kabuki"];
-  if (
-    !validArts.includes(parsed.recommended) ||
-    typeof parsed.scores !== "object" ||
-    typeof parsed.message !== "string"
-  ) {
+  if (typeof parsed.scores !== "object" || typeof parsed.message !== "string") {
     throw new Error("Gemini の応答フォーマットが不正です。");
   }
 
+  const scores: Record<PerformingArt, number> = {
+    nogaku: Math.min(100, Math.max(0, Math.round(Number(parsed.scores.nogaku) || 0))),
+    ningyoJoruri: Math.min(100, Math.max(0, Math.round(Number(parsed.scores.ningyoJoruri) || 0))),
+    kabuki: Math.min(100, Math.max(0, Math.round(Number(parsed.scores.kabuki) || 0))),
+  };
+
+  // recommended は Gemini の出力値のみに依存せず、scores で最高得点の芸能と一致するように再判定する
+  const arts: PerformingArt[] = ["nogaku", "ningyoJoruri", "kabuki"];
+  let highestScore = -1;
+  let recommendedArt: PerformingArt = "nogaku";
+
+  for (const art of arts) {
+    if (scores[art] > highestScore) {
+      highestScore = scores[art];
+      recommendedArt = art;
+    } else if (scores[art] === highestScore && art === parsed.recommended) {
+      recommendedArt = art;
+    }
+  }
+
   return {
-    recommended: parsed.recommended,
-    scores: {
-      nogaku: Math.min(100, Math.max(0, Math.round(Number(parsed.scores.nogaku) || 0))),
-      ningyoJoruri: Math.min(100, Math.max(0, Math.round(Number(parsed.scores.ningyoJoruri) || 0))),
-      kabuki: Math.min(100, Math.max(0, Math.round(Number(parsed.scores.kabuki) || 0))),
-    },
+    recommended: recommendedArt,
+    scores,
     message: parsed.message,
   };
 }
