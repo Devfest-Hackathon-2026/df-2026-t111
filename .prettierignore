@@ -1,0 +1,10 @@
+# 依存関係とビルドの成果物
+node_modules/
+.next/
+out/
+build/
+package-lock.json
+next-env.d.ts
+
+# チーム共通のルール・資料は手で整えるので対象外にする
+*.md
