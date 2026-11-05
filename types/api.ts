@@ -1,8 +1,13 @@
 // API の入出力の型（画面とサーバーで共有する）
 // 仕様の説明は docs/api.md を参照。変更するときは必ずチームに声をかけること。
 
-/** 診断でおすすめする伝統芸能 */
-export type PerformingArt = "kabuki" | "kyogen" | "noh" | "bunraku";
+/**
+ * 診断でおすすめする伝統芸能（三大伝統芸能）
+ * - nogaku：能楽（能・狂言）
+ * - ningyoJoruri：人形浄瑠璃（文楽）
+ * - kabuki：歌舞伎
+ */
+export type PerformingArt = "nogaku" | "ningyoJoruri" | "kabuki";
 
 // ---- POST /api/diagnosis ----
 

@@ -4,9 +4,9 @@ import { errorResponse, isRecord, readJson } from "@/lib/api-response";
 // モック：回答の中身にかかわらず固定の結果を返す
 // TODO: 回答から相性を計算し、Gemini でおすすめ理由を作る
 const MOCK_RESULT: DiagnosisResponse = {
-  recommended: "kyogen",
-  scores: { kabuki: 72, kyogen: 88, noh: 41, bunraku: 56 },
-  message: "（モックの結果です）あなたには狂言がおすすめです。",
+  recommended: "nogaku",
+  scores: { nogaku: 88, ningyoJoruri: 56, kabuki: 72 },
+  message: "（モックの結果です）あなたには能楽がおすすめです。",
 };
 
 export async function POST(request: Request) {

@@ -28,7 +28,13 @@
 
 ## POST /api/diagnosis
 
-診断の回答を受け取り、おすすめの伝統芸能を返します。
+診断の回答を受け取り、三大伝統芸能のうちおすすめを返します。
+
+| 値 | 伝統芸能 |
+|---|---|
+| `nogaku` | 能楽（能・狂言） |
+| `ningyoJoruri` | 人形浄瑠璃（文楽） |
+| `kabuki` | 歌舞伎 |
 
 ### リクエスト
 
@@ -53,15 +59,15 @@
 
 ```json
 {
-  "recommended": "kyogen",
-  "scores": { "kabuki": 72, "kyogen": 88, "noh": 41, "bunraku": 56 },
-  "message": "（モックの結果です）あなたには狂言がおすすめです。"
+  "recommended": "nogaku",
+  "scores": { "nogaku": 88, "ningyoJoruri": 56, "kabuki": 72 },
+  "message": "（モックの結果です）あなたには能楽がおすすめです。"
 }
 ```
 
 | 項目 | 型 | 説明 |
 |---|---|---|
-| `recommended` | `"kabuki"` \| `"kyogen"` \| `"noh"` \| `"bunraku"` | いちばんのおすすめ |
+| `recommended` | `"nogaku"` \| `"ningyoJoruri"` \| `"kabuki"` | いちばんのおすすめ |
 | `scores` | 伝統芸能ごとの数値 | 相性（0〜100） |
 | `message` | string | おすすめ理由のひとこと |
 
