@@ -32,17 +32,40 @@
 
 ## 3. フォルダ構成と担当
 
+### 担当
+
+| | 担当 | 名前 |
+|---|---|---|
+| A | 画面①（① 診断・③ 詳細・④ 行きたい） | 小松菜 |
+| B | 画面②（② ミニ体験：カメラ・マイク） | ももんぐ |
+| C | AI・サーバー・デプロイ | けーの |
+| D | データ・Firebase・Maps・資料 | おたけん |
+
+### フォルダと担当
+
 ```
-src/app/           … 画面（ページ）            担当：（未定）
-src/components/    … 画面の部品                担当：（未定）
-src/app/api/       … サーバー処理（Gemini 呼び出し）担当：（未定）
-src/lib/           … Firebase・Gemini などの共通処理 担当：（未定）
-types/             … 共通の型定義              担当：（未定）※変更前に必ず声をかける
-docs/api.md        … API の仕様（担当の境目）   実装はこれに従う
-public/            … 画像などの静的ファイル
+src/app/page.tsx、src/app/layout.tsx … トップ・全体の枠       担当：A
+src/app/diagnosis/   … ① 診断                              担当：A
+src/app/arts/        … ③ 詳細（伝統芸能ごとのページ）        担当：A
+src/app/wishlist/    … ④ 行きたい                          担当：A
+src/app/challenge/   … ② ミニ体験（見得・名乗り）            担当：B
+src/components/      … 画面の部品（challenge/ の下は B、それ以外は A）
+src/app/api/         … サーバー処理（Gemini 呼び出し）       担当：C
+src/lib/gemini/      … Gemini の共通処理                    担当：C
+src/lib/api-response.ts … API のエラー・入力チェックの共通処理 担当：C
+src/lib/firebase/    … Firebase（ログイン・Firestore）      担当：D
+src/lib/maps/        … Google Maps                         担当：D
+src/data/            … 伝統芸能の文章・公演データ（チームで確認済みのもの）担当：D
+docs/                … 資料                                担当：D（docs/api.md は下記）
+public/              … 画像などの静的ファイル                担当：D
+Dockerfile・next.config.ts など … デプロイ・設定              担当：C
+types/               … 共通の型定義                        管理：C ※変更前に必ず声をかける
+docs/api.md          … API の仕様（担当の境目）              管理：C 実装はこれに従う
 ```
 
 - **自分の担当フォルダ以外は編集しない。** 必要なときは人間に確認する。
+- 画面のパス（`diagnosis` など）は仮。変えるときはこの表も直す。
+- `src/lib/` で上にないものを作るときは、先にチームに声をかける。
 - `types/` と `docs/api.md` は担当同士の約束ごと。勝手に変えない。
 
 ## 4. AI の利用ルール（ハッカソン規定）
