@@ -1,8 +1,8 @@
-import type { DiagnosisResponse } from "@/types/api";
+import type { DiagnosisAnswer, DiagnosisResponse } from "@/types/api";
 import { errorResponse, isRecord, readJson } from "@/lib/api-response";
+import { generateDiagnosis, isMockApiEnabled } from "@/lib/gemini";
 
-// モック：回答の中身にかかわらず固定の結果を返す
-// TODO: 回答から相性を計算し、Gemini でおすすめ理由を作る
+// モック：回答の中身にかかわらず固定の結果を返す（USE_MOCK_API=true の場合に使用）
 const MOCK_RESULT: DiagnosisResponse = {
   recommended: "nogaku",
   scores: { nogaku: 88, ningyoJoruri: 56, kabuki: 72 },
@@ -25,5 +25,16 @@ export async function POST(request: Request) {
     return errorResponse("BAD_REQUEST", "回答の形式が正しくありません。もう一度診断してください。");
   }
 
-  return Response.json(MOCK_RESULT);
+  // USE_MOCK_API=true のときはモックを返す
+  if (isMockApiEnabled()) {
+    return Response.json(MOCK_RESULT);
+  }
+
+  try {
+    const result = await generateDiagnosis(body.answers as DiagnosisAnswer[]);
+    return Response.json(result);
+  } catch (error) {
+    console.error("Diagnosis error:", error);
+    return errorResponse("INTERNAL_ERROR", "診断の作成に失敗しました。もう一度お試しください。");
+  }
 }

@@ -1,11 +1,11 @@
 import type { CritiqueResponse } from "@/types/api";
 import { checkDataUrl, errorResponse, isRecord, readJson } from "@/lib/api-response";
+import { generateNanoriCritique, isMockApiEnabled } from "@/lib/gemini";
 
 // 音声の上限サイズ（10MB）
 const MAX_AUDIO_BYTES = 10 * 1024 * 1024;
 
-// モック：音声の中身にかかわらず固定の講評を返す
-// TODO: Gemini に音声を渡して講評を作る（音声は保存しない）
+// モック：音声の中身にかかわらず固定の講評を返す（USE_MOCK_API=true の場合に使用）
 const MOCK_RESULT: CritiqueResponse = {
   score: 82,
   title: "（モック）よく通る名乗り！",
@@ -23,5 +23,16 @@ export async function POST(request: Request) {
     return errorResponse("BAD_REQUEST", "録音が届きませんでした。もう一度録ってください。");
   }
 
-  return Response.json(MOCK_RESULT);
+  // USE_MOCK_API=true のときはモックを返す
+  if (isMockApiEnabled()) {
+    return Response.json(MOCK_RESULT);
+  }
+
+  try {
+    const result = await generateNanoriCritique((body as { audio: string }).audio);
+    return Response.json(result);
+  } catch (error) {
+    console.error("Nanori critique error:", error);
+    return errorResponse("INTERNAL_ERROR", "講評の作成に失敗しました。もう一度お試しください。");
+  }
 }
