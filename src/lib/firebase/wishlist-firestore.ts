@@ -79,7 +79,20 @@ export const firestoreStore: WishlistStore = {
       const ref = doc(await wishesCollection(), eventId);
       // 登録済みなら何もしない（登録日時を上書きしない）
       if ((await getDoc(ref)).exists()) return;
-      await setDoc(ref, { eventId, artId, createdAt: serverTimestamp() });
+      try {
+        await setDoc(ref, { eventId, artId, createdAt: serverTimestamp() });
+      } catch (error) {
+        // ボタンの連打などで同時に登録すると、あとの書き込みは「書き換え」になり、
+        // ルール（登録後の書き換えは不可）で拒否される。もう登録されていれば成功として扱う
+        if (
+          error instanceof FirebaseError &&
+          error.code === "permission-denied" &&
+          (await getDoc(ref)).exists()
+        ) {
+          return;
+        }
+        throw error;
+      }
     } catch (error) {
       throw toWishlistError(error, "save");
     }
