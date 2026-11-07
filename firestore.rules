@@ -1,0 +1,25 @@
+rules_version = '2';
+
+// Firestore のセキュリティルール（担当：D おたけん）
+// 説明は docs/firebase.md。ここに書いていない場所は、すべて読み書きできない。
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 「行きたい」：本人（匿名ログインの uid）だけが読み書きできる
+    match /users/{userId}/wishes/{eventId} {
+      function isOwner() {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      allow read, delete: if isOwner();
+
+      // 新しく登録するときだけ書ける（あとから書き換えはできない）
+      allow create: if isOwner()
+        && request.resource.data.keys().hasOnly(['eventId', 'artId', 'createdAt'])
+        && request.resource.data.eventId == eventId
+        && eventId is string && eventId.size() <= 100
+        && request.resource.data.artId in ['nogaku', 'ningyoJoruri', 'kabuki']
+        && request.resource.data.createdAt == request.time;
+    }
+  }
+}
