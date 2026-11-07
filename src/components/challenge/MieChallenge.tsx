@@ -47,6 +47,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(null);
 
   // カメラ停止処理
   const stopCamera = () => {
@@ -141,9 +142,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
     if (!file) return;
 
     if (file.size > MAX_IMAGE_BYTES) {
-      setErrorMessage(
-        "写真のサイズが5MBを超えています。別の写真をお試しのうえ再送信してください。",
-      );
+      setErrorMessage("写真のサイズが5MBを超えているか、対応していない形式です。");
       return;
     }
 
@@ -214,25 +213,29 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
         }
       `}</style>
 
-      {/* ヘッダー */}
-      <header
-        className="w-full py-5 text-center shadow-md relative"
-        style={{
-          background:
-            "repeating-linear-gradient(90deg, #017824 0px, #017824 28px, #D5512A 28px, #D5512A 56px, #1a1a1a 56px, #1a1a1a 84px)",
-        }}
-      >
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-widest inline-block px-4 py-1">
-          見得チャレンジ
-        </h1>
-      </header>
+      {phase !== "camera" && phase !== "preview" && (
+        <>
+          {/* ヘッダー */}
+          <header
+            className="w-full py-5 text-center shadow-md relative"
+            style={{
+              background:
+                "repeating-linear-gradient(90deg, #017824 0px, #017824 28px, #D5512A 28px, #D5512A 56px, #1a1a1a 56px, #1a1a1a 84px)",
+            }}
+          >
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-widest inline-block px-4 py-1">
+              見得チャレンジ
+            </h1>
+          </header>
 
-      {/* サブタイトル帯 */}
-      <div className="w-full bg-[#DDB442] py-2.5 text-center shadow-xs">
-        <p className="text-base md:text-lg font-light text-black tracking-wider">
-          実際に見得を切ってみよう
-        </p>
-      </div>
+          {/* サブタイトル帯 */}
+          <div className="w-full bg-[#DDB442] py-2.5 text-center shadow-xs">
+            <p className="text-base md:text-lg font-light text-black tracking-wider">
+              実際に見得を切ってみよう
+            </p>
+          </div>
+        </>
+      )}
 
       <div className="w-full max-w-lg mx-auto px-4 pt-5 pb-12">
         {errorMessage && (
@@ -243,7 +246,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
 
         {phase === "intro" && (
           <div className="flex flex-col gap-7">
-            {/* 選択画面へ戻るリンク（文字を細く、フォントサイズ・中央三角調整） */}
+            {/* 選択画面へ戻るリンク */}
             <div className="flex items-center">
               <a
                 href="/challenge"
@@ -263,7 +266,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
 
             {children}
 
-            {/* 見得とはセクション（説明を下端に揃える） */}
+            {/* 見得とはセクション */}
             <section className="flex gap-5 items-start p-1">
               <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch">
                 <h2 className="text-3xl md:text-4xl font-extrabold text-[#D5512A] tracking-wide">
@@ -281,17 +284,15 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
               </div>
             </section>
 
-            {/* チャレンジの流れセクション（余白を現在の2/3に調整） */}
-            <section className="my-10">
+            {/* チャレンジの流れセクション */}
+            <section className="my-6">
               <div className="bg-[#DDB442] py-2.5 text-center -mx-4 mb-5 shadow-xs">
                 <h3 className="text-xl md:text-2xl font-bold text-black tracking-widest">
                   チャレンジの流れ
                 </h3>
               </div>
 
-              {/* 3ステップ：左右端を完全に揃えた矢印リボン */}
               <div className="flex items-start justify-between -mx-4">
-                {/* ステップ1 */}
                 <button
                   type="button"
                   onClick={() => handleStepClick(0)}
@@ -317,7 +318,6 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   </div>
                 </button>
 
-                {/* ステップ2 */}
                 <button
                   type="button"
                   onClick={() => handleStepClick(1)}
@@ -344,7 +344,6 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   </div>
                 </button>
 
-                {/* ステップ3 */}
                 <button
                   type="button"
                   onClick={() => handleStepClick(2)}
@@ -453,8 +452,9 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
 
         {/* カメラ撮影フェーズ */}
         {phase === "camera" && (
-          <div className="flex flex-col items-center pt-2">
-            <div className="relative w-full aspect-[3/4] bg-neutral-900 rounded-2xl overflow-hidden mb-4 shadow-xl border-2 border-[#8c7863]">
+          <div className="flex flex-col items-center pt-2 -mx-4">
+            {/* カメラ映像ビューポート */}
+            <div className="relative w-full aspect-[3/4] bg-neutral-900 overflow-hidden mb-6 shadow-xl border-y-2 border-[#8c7863]">
               <video
                 ref={videoRef}
                 playsInline
@@ -462,6 +462,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                 muted
                 className="w-full h-full object-cover -scale-x-100"
               />
+
               <div className="absolute inset-6 border-2 border-dashed border-white/80 rounded-xl pointer-events-none flex items-center justify-center">
                 <span className="text-xs font-bold text-white bg-black/60 px-4 py-2 rounded-full">
                   枠の中に顔をあわせて見得！
@@ -469,21 +470,14 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
               </div>
             </div>
 
-            <div className="w-full flex gap-3">
+            {/* 「撮影する」ボタン */}
+            <div className="w-full px-4">
               <button
-                onClick={() => {
-                  stopCamera();
-                  setPhase("intro");
-                }}
-                className="py-3 px-5 border border-[#8c7863] bg-white/80 rounded-xl text-neutral-800 text-sm font-bold hover:bg-white"
-              >
-                もどる
-              </button>
-              <button
+                type="button"
                 onClick={handleCaptureFromVideo}
-                className="flex-1 py-3.5 bg-[#D5512A] hover:bg-[#be421f] text-white font-extrabold text-base rounded-xl shadow-md active:scale-95 transition cursor-pointer"
+                className="w-full py-3.5 bg-[#D5512A] hover:bg-[#be421f] text-white font-extrabold text-base rounded-xl shadow-md active:scale-95 transition cursor-pointer flex items-center justify-center gap-2"
               >
-                📸 撮影する
+                <span>📸 撮影する</span>
               </button>
             </div>
           </div>
@@ -492,15 +486,12 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
         {/* プレビューフェーズ */}
         {phase === "preview" && capturedImage && (
           <div className="flex flex-col items-center pt-2">
-            <h3 className="font-extrabold text-base mb-3 text-[#2a241e]">
-              この写真で判定しますか？
-            </h3>
             <div className="w-full aspect-[3/4] rounded-2xl overflow-hidden mb-4 bg-black shadow-xl border-2 border-[#8c7863]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={capturedImage} alt="撮影した見得" className="w-full h-full object-cover" />
             </div>
 
-            <div className="w-full flex flex-col gap-2.5">
+            <div className="w-full flex flex-col gap-3">
               <button
                 onClick={handleSubmit}
                 className="w-full py-3.5 bg-[#D5512A] hover:bg-[#be421f] text-white font-extrabold text-base rounded-xl shadow-md active:scale-95 transition cursor-pointer"
@@ -509,7 +500,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
               </button>
               <button
                 onClick={handleRetake}
-                className="w-full py-2.5 border border-[#8c7863] bg-white/70 rounded-xl text-neutral-800 text-sm font-bold hover:bg-white"
+                className="w-full py-3.5 border-2 border-black bg-transparent rounded-xl text-black text-base font-bold hover:bg-black/5 active:scale-95 transition cursor-pointer"
               >
                 もう一度撮り直す
               </button>
