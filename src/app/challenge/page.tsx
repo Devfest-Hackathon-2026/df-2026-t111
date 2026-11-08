@@ -22,6 +22,14 @@ export default function ChallengeIndexPage() {
           >
             名乗りチャレンジ（狂言）
           </Link>
+
+          {/* 人形浄瑠璃チャレンジ（ひとり三人遣い） */}
+          <Link
+            href="/challenge/ningyo-joruri"
+            className="w-full py-4 px-5 bg-neutral-100 hover:bg-neutral-200 rounded-xl font-medium text-center transition"
+          >
+            ひとり三人遣いチャレンジ（人形浄瑠璃）
+          </Link>
         </div>
       </div>
     </main>
