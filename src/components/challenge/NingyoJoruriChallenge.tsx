@@ -114,6 +114,12 @@ export function NingyoJoruriChallenge({
     setActiveStep(1);
   };
 
+  // 修業を中断してintroに戻る関数
+  const handleAbort = () => {
+    setPhase("intro");
+    setActiveStep(0);
+  };
+
   // ステージ移行時の案内表示（約2.0秒後に自動でゲーム本編へ移行）
   useEffect(() => {
     if (phase !== "stageIntro") return;
@@ -417,7 +423,7 @@ export function NingyoJoruriChallenge({
 
             {children}
 
-            {/* 写真エリアをなくし、文章を詳しくした「三人遣いとは」セクション */}
+            {/* 人形浄瑠璃とは（詳細な説明） */}
             <section className="flex flex-col gap-3 p-1">
               <h2 className="text-3xl md:text-4xl font-extrabold text-[#D5512A] tracking-wide">
                 三人遣いとは
@@ -499,21 +505,21 @@ export function NingyoJoruriChallenge({
                     <span className="font-bold text-[#D5512A] shrink-0">1.</span>
                     <div className="flex-1 grid grid-cols-[auto_1fr] gap-x-2">
                       <span className="font-bold text-[#2a241e]">足遣い（初級）：</span>
-                      <span>【足】のみ、緑色の枠が重なる瞬間に打つ</span>
+                      <span>【足】のみをリズムに合わせて動かす</span>
                     </div>
                   </div>
                   <div className="pb-2 border-b border-[#2a241e]/20 flex items-start gap-2">
                     <span className="font-bold text-[#D5512A] shrink-0">2.</span>
                     <div className="flex-1 grid grid-cols-[auto_1fr] gap-x-2">
                       <span className="font-bold text-[#2a241e]">左遣い（中級）：</span>
-                      <span>【足】【左手】の色分けされた枠で約10回打つ</span>
+                      <span>【足】【左手】を動かす</span>
                     </div>
                   </div>
                   <div className="pb-2 border-b border-[#2a241e]/20 flex items-start gap-2">
                     <span className="font-bold text-[#D5512A] shrink-0">3.</span>
                     <div className="flex-1 grid grid-cols-[auto_1fr] gap-x-2">
                       <span className="font-bold text-[#2a241e]">主遣い（上級）：</span>
-                      <span>3色の全ボタンを駆使して約15回打つ</span>
+                      <span>【足】【左手】【頭】すべての部位を動かす</span>
                     </div>
                   </div>
                 </div>
@@ -693,11 +699,22 @@ export function NingyoJoruriChallenge({
               </div>
             </div>
 
-            {/* ボタン下の操作説明 */}
-            <div className="w-full text-center pt-2">
-              <p className="text-sm md:text-base font-light text-[#2a241e] leading-relaxed">
+            {/* ボタン下の操作説明と、中央配置された修業中止ボタン */}
+            <div className="w-full flex flex-col items-center pt-2 space-y-4">
+              <p className="text-sm md:text-base font-light text-[#2a241e] leading-relaxed text-center">
                 縮んできた枠がボタンの枠とぴったり重なった瞬間に押す
               </p>
+
+              <button
+                type="button"
+                onClick={handleAbort}
+                className="inline-flex items-center gap-2 text-base md:text-lg font-bold text-[#2a241e] hover:opacity-85 transition cursor-pointer py-2 px-4"
+              >
+                <span className="w-7 h-7 rounded-full bg-[#017824] text-white flex items-center justify-center text-xs shrink-0">
+                  ◀
+                </span>
+                <span>修業を中止する</span>
+              </button>
             </div>
           </div>
         )}

@@ -15,12 +15,12 @@ export default function ChallengeIndexPage() {
             見得チャレンジ（歌舞伎）
           </Link>
 
-          {/* 名乗りチャレンジ（狂言） */}
+          {/* 名乗りチャレンジ（文楽） */}
           <Link
             href="/challenge/nanori"
             className="w-full py-4 px-5 bg-neutral-100 hover:bg-neutral-200 rounded-xl font-medium text-center transition"
           >
-            名乗りチャレンジ（狂言）
+            名乗りチャレンジ（文楽）
           </Link>
 
           {/* 人形浄瑠璃チャレンジ（ひとり三人遣い） */}

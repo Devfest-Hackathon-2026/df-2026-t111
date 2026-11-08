@@ -212,31 +212,30 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
         }
       `}</style>
 
-      {phase !== "camera" && phase !== "preview" && phase !== "result" && (
-        <>
-          {/* ヘッダー */}
-          <header
-            className="w-full py-5 text-center shadow-md relative"
-            style={{
-              background:
-                "repeating-linear-gradient(90deg, #017824 0px, #017824 28px, #D5512A 28px, #D5512A 56px, #1a1a1a 56px, #1a1a1a 84px)",
-            }}
-          >
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-widest inline-block px-4 py-1">
-              見得チャレンジ
-            </h1>
-          </header>
-
-          {/* サブタイトル帯 */}
-          <div className="w-full bg-[#DDB442] py-2.5 text-center shadow-xs">
-            <p className="text-base md:text-lg font-light text-black tracking-wider">
-              実際に見得を切ってみよう
-            </p>
-          </div>
-        </>
+      {/* 定式幕ヘッダー（すべてのフェーズで常に表示） */}
+      {phase !== "result" && (
+        <header
+          className="w-full py-5 text-center shadow-md relative"
+          style={{
+            background:
+              "repeating-linear-gradient(90deg, #017824 0px, #017824 28px, #D5512A 28px, #D5512A 56px, #1a1a1a 56px, #1a1a1a 84px)",
+          }}
+        >
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-widest inline-block px-4 py-1">
+            見得チャレンジ
+          </h1>
+        </header>
       )}
 
-      {/* 左右に同じだけのゆとりある余白（px-6 md:px-8）を設けて画面幅いっぱいにしないよう調整 */}
+      {/* サブタイトル帯（introフェーズのみ） */}
+      {phase === "intro" && (
+        <div className="w-full bg-[#DDB442] py-2.5 text-center shadow-xs">
+          <p className="text-base md:text-lg font-light text-black tracking-wider">
+            実際に見得を切ってみよう
+          </p>
+        </div>
+      )}
+
       <div className="w-full max-w-lg mx-auto px-6 md:px-8 pt-5 pb-12">
         {errorMessage && (
           <div className="w-full mb-4 p-3.5 bg-red-100 border border-red-400 text-red-800 rounded-lg text-sm text-center font-bold">
@@ -269,8 +268,9 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
             {/* 見得とはセクション */}
             <section className="flex gap-5 items-start p-1">
               <div className="flex-1 min-w-0 flex flex-col justify-between self-stretch">
-                <h2 className="text-3xl md:text-4xl font-extrabold text-[#D5512A] tracking-wide">
-                  見得<span className="text-xl md:text-2xl font-bold text-[#2a241e]">とは</span>
+                <h2 className="text-4xl md:text-5xl font-extrabold tracking-tighter flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className="text-[#D5512A]">見得</span>
+                  <span className="text-xl md:text-2xl font-bold text-black">とは</span>
                 </h2>
                 <p className="text-base md:text-xl leading-relaxed text-[#3a3229] font-light pb-1">
                   歌舞伎で役者が感情の高ぶりや重要な場面で動きを一時的に止め、力強いポーズを決める演出のこと
@@ -284,15 +284,16 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
               </div>
             </section>
 
-            {/* チャレンジの流れセクション（左右に隙間を保つため mx-0 は外しています） */}
+            {/* チャレンジの流れセクション */}
             <section className="my-6">
               <div className="bg-[#DDB442] py-2.5 text-center mb-5 shadow-xs">
-                <h3 className="text-xl md:text-2xl font-bold text-black tracking-widest">
+                <h3 className="text-xl md:text-2xl font-normal text-black tracking-widest">
                   チャレンジの流れ
                 </h3>
               </div>
 
               <div className="flex items-start justify-between">
+                {/* 1. お手本を見る */}
                 <button
                   type="button"
                   onClick={() => handleStepClick(0)}
@@ -301,14 +302,14 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   <div className="h-16 flex items-center justify-center">
                     <svg
                       viewBox="0 0 24 24"
-                      className="w-14 h-14 fill-none stroke-[#1a1a1a] stroke-[2.2]"
+                      className="w-14 h-14 fill-none stroke-[#1a1a1a] stroke-[1.5]"
                     >
                       <ellipse cx="12" cy="12" rx="8" ry="5" />
                       <circle cx="12" cy="12" r="3" />
                     </svg>
                   </div>
                   <div
-                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-bold leading-tight relative shadow-xs flex items-center justify-center pl-3"
+                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-normal leading-tight relative shadow-xs flex items-center justify-center pl-3"
                     style={{
                       clipPath:
                         "polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%)",
@@ -318,6 +319,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   </div>
                 </button>
 
+                {/* 2. カメラで撮影 */}
                 <button
                   type="button"
                   onClick={() => handleStepClick(1)}
@@ -326,7 +328,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   <div className="h-16 flex items-center justify-center">
                     <svg
                       viewBox="0 0 24 24"
-                      className="w-12 h-12 fill-none stroke-[#1a1a1a] stroke-[2.2]"
+                      className="w-12 h-12 fill-none stroke-[#1a1a1a] stroke-[1.5]"
                     >
                       <rect x="2" y="6" width="20" height="14" rx="2" />
                       <circle cx="12" cy="13" r="3.5" />
@@ -334,7 +336,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                     </svg>
                   </div>
                   <div
-                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-bold leading-tight relative shadow-xs flex items-center justify-center pl-3 pr-1"
+                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-normal leading-tight relative shadow-xs flex items-center justify-center pl-3 pr-1"
                     style={{
                       clipPath:
                         "polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%)",
@@ -344,6 +346,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   </div>
                 </button>
 
+                {/* 3. 講評を見る */}
                 <button
                   type="button"
                   onClick={() => handleStepClick(2)}
@@ -352,14 +355,14 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   <div className="h-16 flex items-center justify-center">
                     <svg
                       viewBox="0 0 24 24"
-                      className="w-12 h-12 fill-none stroke-[#1a1a1a] stroke-[2.5]"
+                      className="w-12 h-12 fill-none stroke-[#1a1a1a] stroke-[1.6]"
                     >
                       <circle cx="12" cy="12" r="9" />
                       <path d="M8 12l2.5 2.5L16 9" />
                     </svg>
                   </div>
                   <div
-                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-bold leading-tight relative shadow-xs flex items-center justify-center pl-3"
+                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-normal leading-tight relative shadow-xs flex items-center justify-center pl-3"
                     style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%, 14px 50%)" }}
                   >
                     講評を見る
@@ -370,11 +373,11 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
 
             {/* お手本セクション */}
             <section id="example">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-[#D5512A] mb-4 tracking-wide">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-[#D5512A] mb-4 tracking-wide">
                 お手本
               </h2>
 
-              <div className="flex gap-8 items-center p-1">
+              <div className="flex gap-6 items-center p-1">
                 <div className="w-40 h-52 rounded-lg overflow-hidden shrink-0 shadow-md bg-[#c2b59b] border border-[#8c7863] flex flex-col items-center justify-center text-center p-2">
                   {capturedImage ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -391,22 +394,18 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   )}
                 </div>
 
-                <div className="flex-1 flex flex-col justify-center space-y-3 text-base md:text-lg text-[#2a241e] font-light tracking-wide">
-                  <div className="pb-2 border-b border-[#2a241e]/20 flex items-start gap-2">
+                <div className="flex-1 flex flex-col justify-around self-stretch text-sm md:text-base text-[#2a241e] font-light tracking-wide py-1">
+                  <div className="pb-2.5 border-b border-[#2a241e]/20 flex items-start gap-2">
                     <span className="font-bold text-[#D5512A]">1.</span>
                     <span>視線を一点にグッと据える</span>
                   </div>
-                  <div className="pb-2 border-b border-[#2a241e]/20 flex items-start gap-2">
+                  <div className="pb-2.5 border-b border-[#2a241e]/20 flex items-start gap-2">
                     <span className="font-bold text-[#D5512A]">2.</span>
                     <span>ポーズの瞬間に動きを完全にとめる</span>
                   </div>
-                  <div className="pb-2 border-b border-[#2a241e]/20 flex items-start gap-2">
+                  <div className="flex items-start gap-2 pt-0.5">
                     <span className="font-bold text-[#D5512A]">3.</span>
                     <span>首を力強く傾けて角度をつける</span>
-                  </div>
-                  <div className="pb-2 flex items-start gap-2">
-                    <span className="font-bold text-[#D5512A]">4.</span>
-                    <span>足を踏みしめて下半身を安定させる</span>
                   </div>
                 </div>
               </div>
@@ -425,11 +424,6 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                 disabled={isStartingCamera}
                 className="w-full py-4 px-6 bg-[#D5512A] hover:bg-[#be421f] active:scale-95 text-white font-extrabold text-lg rounded-2xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                <svg viewBox="0 0 24 24" className="w-6 h-6 fill-none stroke-white stroke-[2]">
-                  <rect x="2" y="6" width="20" height="14" rx="2" />
-                  <circle cx="12" cy="13" r="3.5" />
-                  <path d="M8 6l1.5-3h5L16 6" />
-                </svg>
                 <span>
                   {isStartingCamera
                     ? "準備中..."
@@ -453,7 +447,6 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
         {/* カメラ撮影フェーズ */}
         {phase === "camera" && (
           <div className="flex flex-col items-center pt-2 -mx-4">
-            {/* カメラ映像ビューポート */}
             <div className="relative w-full aspect-[3/4] bg-neutral-900 overflow-hidden mb-6 shadow-xl border-y-2 border-[#8c7863]">
               <video
                 ref={videoRef}
@@ -470,14 +463,13 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
               </div>
             </div>
 
-            {/* 「撮影する」ボタン */}
             <div className="w-full px-4">
               <button
                 type="button"
                 onClick={handleCaptureFromVideo}
                 className="w-full py-3.5 bg-[#D5512A] hover:bg-[#be421f] text-white font-extrabold text-base rounded-xl shadow-md active:scale-95 transition cursor-pointer flex items-center justify-center gap-2"
               >
-                <span>📸 撮影する</span>
+                <span>撮影する</span>
               </button>
             </div>
           </div>
@@ -522,7 +514,6 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
         {/* 講評結果フェーズ */}
         {phase === "result" && critique && (
           <div className="flex flex-col items-center -mx-6 md:-mx-8 -mt-5">
-            {/* 定式幕ヘッダーを最上部に配置 */}
             <header
               className="w-full py-5 text-center shadow-md relative mb-6"
               style={{
@@ -536,15 +527,20 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
             </header>
 
             <div className="w-full px-6 md:px-8 flex flex-col items-center">
-              {/* 結果は… (大きめの文字にして左に寄せる) */}
               <div className="w-full max-w-[280px] md:max-w-[320px] text-left mb-1">
                 <p className="text-2xl md:text-3xl font-extrabold text-[#2a241e]">結果は…</p>
               </div>
 
-              {/* 点数表示と「点でした」を配置（点でしたを右端に配置） */}
               <div className="w-full max-w-[280px] md:max-w-[320px] flex flex-col items-center justify-center my-2 mb-4 gap-2 relative">
-                <div className="w-48 h-48 md:w-56 md:h-56 rounded-full bg-[#D5512A] flex items-center justify-center shadow-lg shrink-0">
-                  <span className="text-7xl md:text-8xl font-black text-[#DDB442] tracking-tighter">
+                <div className="w-48 h-48 md:w-56 md:h-56 rounded-full bg-[#D5512A] flex items-center justify-center shadow-lg shrink-0 pb-3">
+                  <span
+                    className="text-9xl md:text-9xl font-black text-[#DDB442] tracking-tighter"
+                    style={{
+                      fontWeight: 900,
+                      WebkitTextStroke: "8px #2a241e",
+                      paintOrder: "stroke fill",
+                    }}
+                  >
                     {critique.score}
                   </span>
                 </div>
@@ -556,7 +552,6 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                 </div>
               </div>
 
-              {/* お手本 vs あなたの写真比較（隙間を狭く調整） */}
               <div className="w-full grid grid-cols-2 gap-4 mt-2 mb-10">
                 <div className="flex flex-col items-center">
                   <span className="text-lg font-extrabold text-[#2a241e] mb-2">お手本</span>
@@ -587,21 +582,18 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                 </div>
               </div>
 
-              {/* 講評見出し（中央配置＆サイズ拡大） */}
               <div className="w-full text-center mb-3">
                 <h3 className="text-2xl md:text-3xl font-extrabold text-[#2a241e] tracking-wide">
                   講評
                 </h3>
               </div>
 
-              {/* 講評コメントボックス（黄色いカード・緑のバッジなし、上下paddingと文字サイズ拡大） */}
               <div className="w-full bg-[#DDB442] rounded-2xl py-10 px-8 mb-6 shadow-md flex flex-col items-center text-center">
                 <p className="text-xl md:text-2xl font-bold text-[#2a241e] leading-relaxed whitespace-pre-wrap">
                   {critique.comment}
                 </p>
               </div>
 
-              {/* 下部リンク (左：もう一度挑戦 / 右：選択画面へ) */}
               <div className="w-full flex items-center justify-between px-2 pt-6 pb-6">
                 <button
                   type="button"
@@ -633,7 +625,6 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
           </div>
         )}
 
-        {/* プライバシー注記 */}
         <footer className="px-4 text-center mt-6">
           <p className="text-[11px] text-[#6b5c4d] font-bold">
             ※ カメラ・マイクのデータは講評にだけ使い、保存しません。
