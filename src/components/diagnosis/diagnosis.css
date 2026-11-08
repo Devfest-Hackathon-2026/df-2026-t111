@@ -1,0 +1,590 @@
+@import url('https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap');
+
+.diagnosis-root {
+  --bg-japanese: #d8cdba;
+  --bg-card: #e8e0d1;
+  --text-main: #2b251f;
+  --text-sub: #524940;
+  --gold-btn: #d7a844;
+  --gold-btn-hover: #e4b64e;
+  --gold-btn-active: #c29532;
+  --gold-btn-text: #221b10;
+  --green-accent: #196a39;
+  --orange-accent: #d94d22;
+  --dot-unanswered: #4b443c;
+  --badge-red: #d14725;
+  --badge-yellow: #f4c844;
+
+  background-color: var(--bg-japanese);
+  background-image: 
+    radial-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+    radial-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
+.diagnosis-root * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Yuji Syuku', serif !important;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* モバイル表示コンテナ（カンプに合わせたスマホ幅） */
+.diagnosis-root .screen-container {
+  position: relative;
+  width: 100%;
+  max-width: 414px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 20px 20px;
+  box-sizing: border-box;
+}
+
+/* ヘッダー（質問画面のみ表示） */
+.diagnosis-root .screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 8px;
+  padding-bottom: 6px;
+  z-index: 10;
+}
+
+.diagnosis-root .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.diagnosis-root .skip-btn {
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2b251f;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+  padding: 4px;
+}
+
+.diagnosis-root .skip-btn:hover {
+  color: var(--orange-accent);
+}
+
+.diagnosis-root .header-close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green-accent);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease;
+}
+
+.diagnosis-root .header-close-btn:hover {
+  transform: scale(1.08);
+}
+
+/* 進捗インジケーター（7つの丸） */
+.diagnosis-root .progress-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 0 18px 0;
+}
+
+.diagnosis-root .progress-dot {
+  display: inline-block;
+  border-radius: 50%;
+  transition: all 0.25s ease;
+}
+
+.diagnosis-root .progress-dot.answered {
+  width: 14px;
+  height: 14px;
+  background-color: var(--green-accent);
+}
+
+.diagnosis-root .progress-dot.current {
+  width: 16px;
+  height: 16px;
+  background-color: var(--orange-accent);
+  transform: scale(1.1);
+}
+
+.diagnosis-root .progress-dot.unanswered {
+  width: 6px;
+  height: 6px;
+  background-color: var(--dot-unanswered);
+  opacity: 0.8;
+}
+
+/* メインコンテンツ枠 */
+.diagnosis-root .screen-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- 質問画面 --- */
+.diagnosis-root .quiz-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.diagnosis-root .question-section {
+  margin-top: 4px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.diagnosis-root .question-badge {
+  display: inline-block;
+  font-size: 17px;
+  color: var(--green-accent);
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.12em;
+}
+
+.diagnosis-root .question-text {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #241e17;
+  letter-spacing: 0.02em;
+}
+
+/* 選択肢リスト */
+.diagnosis-root .options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: auto;
+}
+
+.diagnosis-root .option-button {
+  background-color: var(--gold-btn);
+  color: var(--gold-btn-text);
+  border: 1px solid #c29532;
+  border-radius: 14px;
+  padding: 16px 14px;
+  font-size: 17.5px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.18s ease;
+  line-height: 1.45;
+}
+
+.diagnosis-root .option-button:hover {
+  background-color: var(--gold-btn-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.diagnosis-root .option-button:active {
+  transform: translateY(1px);
+  background-color: var(--gold-btn-active);
+}
+
+.diagnosis-root .option-button.selected {
+  background-color: var(--orange-accent) !important;
+  color: #ffffff !important;
+  border-color: #b83a15 !important;
+  box-shadow: 0 4px 12px rgba(217, 77, 34, 0.4) !important;
+}
+
+/* 下部ナビゲーション */
+.diagnosis-root .quiz-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  padding-bottom: 12px;
+}
+
+.diagnosis-root .nav-arrow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #2b251f;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  padding: 4px;
+}
+
+.diagnosis-root .nav-arrow-btn:active {
+  transform: scale(0.97);
+}
+
+.diagnosis-root .nav-arrow-btn.disabled {
+  opacity: 0.3 !important;
+  pointer-events: none !important;
+  cursor: not-allowed;
+}
+
+.diagnosis-root .circle-icon {
+  width: 26px;
+  height: 26px;
+  background: var(--green-accent);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+}
+
+/* --- 診断結果画面 --- */
+.diagnosis-root .result-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  padding-top: 10px;
+}
+
+.diagnosis-root .result-top-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.diagnosis-root .result-header-text {
+  font-size: 19px;
+  font-weight: 700;
+  color: #2b251f;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.diagnosis-root .result-subtitle-top {
+  font-size: 18px;
+  font-weight: 700;
+  color: #c93b16;
+  text-align: center;
+  letter-spacing: 0.05em;
+  margin-bottom: 10px;
+}
+
+/* バッジ（カンプの極太黒フチ・赤丸中心配置） */
+.diagnosis-root .result-badge-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.diagnosis-root .badge-container {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  padding-right: 48px;
+}
+
+.diagnosis-root .badge-first-char-box {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.diagnosis-root .badge-red-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90px;
+  height: 90px;
+  background-color: var(--badge-red);
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(209, 71, 37, 0.35);
+  z-index: 1;
+}
+
+.diagnosis-root .badge-rest-chars-box {
+  display: flex;
+  align-items: center;
+  margin-left: -4px;
+  z-index: 2;
+}
+
+.diagnosis-root .badge-char-text {
+  position: relative;
+  z-index: 2;
+  font-weight: 900;
+  color: var(--badge-yellow);
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+  text-shadow:
+    -3px -3px 0 #111,
+     3px -3px 0 #111,
+    -3px  3px 0 #111,
+     3px  3px 0 #111,
+    -4px  0   0 #111,
+     4px  0   0 #111,
+     0   -4px 0 #111,
+     0    4px 0 #111;
+  -webkit-text-stroke: 5px #111;
+  paint-order: stroke fill;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.diagnosis-root .badge-type-label {
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #241e17;
+  letter-spacing: 0.05em;
+}
+
+/* 説明カード枠（薄いクリーム色の背景） */
+.diagnosis-root .result-card {
+  background-color: #efe8dc;
+  border-radius: 18px;
+  padding: 16px 14px 14px 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+/* カルーセル画像 */
+.diagnosis-root .photo-carousel-wrapper {
+  width: 100%;
+}
+
+.diagnosis-root .photo-carousel-track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.diagnosis-root .photo-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.diagnosis-root .photo-card {
+  flex: 0 0 84%;
+  scroll-snap-align: center;
+  background: #fdfaf6;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+}
+
+.diagnosis-root .photo-img {
+  width: 100%;
+  height: 128px;
+  object-fit: cover;
+  display: block;
+  background: #c5bba8;
+}
+
+.diagnosis-root .photo-caption {
+  padding: 5px 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #2b251f;
+  text-align: center;
+  background: #f7f1e6;
+}
+
+/* 説明文テキスト */
+.diagnosis-root .result-card-text {
+  font-size: 15px;
+  line-height: 1.68;
+  color: #3b332a;
+  text-align: justify;
+}
+
+.diagnosis-root .result-details-link {
+  display: block;
+  text-align: right;
+  font-size: 14.5px;
+  color: #2b251f;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  align-self: flex-end;
+}
+
+.diagnosis-root .result-details-link:hover {
+  color: var(--green-accent);
+}
+
+/* 画面最下部の体験するボタン（横幅いっぱい） */
+.diagnosis-root .experience-btn-area {
+  padding-bottom: 12px;
+  width: 100%;
+}
+
+.diagnosis-root .experience-btn {
+  width: 100%;
+  background-color: var(--gold-btn);
+  color: var(--gold-btn-text);
+  border: 1px solid #bf9233;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+  letter-spacing: 0.15em;
+  text-align: center;
+}
+
+.diagnosis-root .experience-btn:hover {
+  background-color: var(--gold-btn-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+}
+
+.diagnosis-root .experience-btn:active {
+  transform: translateY(1px);
+  background-color: var(--gold-btn-active);
+}
+
+/* トースト通知 */
+.diagnosis-root .toast-notification {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(28, 24, 20, 0.94);
+  color: #ffd88a;
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-size: 14.5px;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 100;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 216, 138, 0.3);
+}
+
+.diagnosis-root .toast-notification.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* モーダル */
+.diagnosis-root .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.diagnosis-root .modal-sheet {
+  background: var(--bg-japanese);
+  width: 100%;
+  max-width: 414px;
+  max-height: 85%;
+  border-radius: 26px 26px 0 0;
+  padding: 24px 20px 32px 20px;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.25);
+  overflow-y: auto;
+  position: relative;
+}
+
+.diagnosis-root .modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #4b443c;
+  color: #fff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.diagnosis-root .modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f1b16;
+  margin-bottom: 12px;
+  padding-right: 36px;
+}
+
+.diagnosis-root .modal-content {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #332a22;
+}
+
+.diagnosis-root .modal-action-card {
+  margin-top: 14px;
+  padding: 12px;
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
