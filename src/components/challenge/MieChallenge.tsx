@@ -47,7 +47,6 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [countdown, setCountdown] = useState<number | null>(null);
 
   // カメラ停止処理
   const stopCamera = () => {
@@ -213,7 +212,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
         }
       `}</style>
 
-      {phase !== "camera" && phase !== "preview" && (
+      {phase !== "camera" && phase !== "preview" && phase !== "result" && (
         <>
           {/* ヘッダー */}
           <header
@@ -237,7 +236,8 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
         </>
       )}
 
-      <div className="w-full max-w-lg mx-auto px-4 pt-5 pb-12">
+      {/* 左右に同じだけのゆとりある余白（px-6 md:px-8）を設けて画面幅いっぱいにしないよう調整 */}
+      <div className="w-full max-w-lg mx-auto px-6 md:px-8 pt-5 pb-12">
         {errorMessage && (
           <div className="w-full mb-4 p-3.5 bg-red-100 border border-red-400 text-red-800 rounded-lg text-sm text-center font-bold">
             {errorMessage}
@@ -284,15 +284,15 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
               </div>
             </section>
 
-            {/* チャレンジの流れセクション */}
+            {/* チャレンジの流れセクション（左右に隙間を保つため mx-0 は外しています） */}
             <section className="my-6">
-              <div className="bg-[#DDB442] py-2.5 text-center -mx-4 mb-5 shadow-xs">
+              <div className="bg-[#DDB442] py-2.5 text-center mb-5 shadow-xs">
                 <h3 className="text-xl md:text-2xl font-bold text-black tracking-widest">
                   チャレンジの流れ
                 </h3>
               </div>
 
-              <div className="flex items-start justify-between -mx-4">
+              <div className="flex items-start justify-between">
                 <button
                   type="button"
                   onClick={() => handleStepClick(0)}
@@ -308,7 +308,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                     </svg>
                   </div>
                   <div
-                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-bold leading-tight relative shadow-xs flex items-center justify-center pl-2"
+                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-bold leading-tight relative shadow-xs flex items-center justify-center pl-3"
                     style={{
                       clipPath:
                         "polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%)",
@@ -334,7 +334,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                     </svg>
                   </div>
                   <div
-                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-bold leading-tight relative shadow-xs flex items-center justify-center px-2"
+                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-bold leading-tight relative shadow-xs flex items-center justify-center pl-3 pr-1"
                     style={{
                       clipPath:
                         "polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 14px 50%)",
@@ -359,7 +359,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                     </svg>
                   </div>
                   <div
-                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-bold leading-tight relative shadow-xs flex items-center justify-center pr-2"
+                    className="w-full py-2.5 bg-[#017824] text-white text-xs md:text-sm font-bold leading-tight relative shadow-xs flex items-center justify-center pl-3"
                     style={{ clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%, 14px 50%)" }}
                   >
                     講評を見る
@@ -521,41 +521,115 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
 
         {/* 講評結果フェーズ */}
         {phase === "result" && critique && (
-          <div className="flex flex-col items-center pt-2">
-            <div className="w-full bg-[#f4ebd9] border-2 border-[#8c7863] rounded-2xl p-5 mb-6 shadow-md text-left">
-              <h2 className="text-xs font-bold text-[#8c7863] mb-1">講評結果</h2>
-              <div className="text-4xl font-extrabold text-[#D5512A] mb-2">
-                {critique.score}
-                <span className="text-lg">点</span>
-              </div>
-              <h3 className="text-lg font-extrabold text-[#2a241e] mb-2">{critique.title}</h3>
-              <p className="text-sm font-bold text-[#3a3229] leading-relaxed mb-4">
-                {critique.comment}
-              </p>
-
-              {critique.tips && critique.tips.length > 0 && (
-                <div className="bg-white/70 p-3 rounded-lg border border-[#8c7863]/40">
-                  <p className="text-xs font-bold text-[#2a241e] mb-1">アドバイス：</p>
-                  <ul className="text-xs text-[#2a241e] font-bold list-disc list-inside space-y-1">
-                    {critique.tips.map((tip, idx) => (
-                      <li key={idx}>{tip}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            <button
-              onClick={() => {
-                setCapturedImage(null);
-                setCritique(null);
-                setPhase("intro");
-                setActiveStep(0);
+          <div className="flex flex-col items-center -mx-6 md:-mx-8 -mt-5">
+            {/* 定式幕ヘッダーを最上部に配置 */}
+            <header
+              className="w-full py-5 text-center shadow-md relative mb-6"
+              style={{
+                background:
+                  "repeating-linear-gradient(90deg, #017824 0px, #017824 28px, #D5512A 28px, #D5512A 56px, #1a1a1a 56px, #1a1a1a 84px)",
               }}
-              className="w-full py-3.5 bg-[#017824] hover:bg-[#015e1c] text-white font-extrabold text-base rounded-xl active:scale-95 transition shadow-md cursor-pointer"
             >
-              もう一度チャレンジする
-            </button>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-widest inline-block px-4 py-1">
+                見得チャレンジ
+              </h1>
+            </header>
+
+            <div className="w-full px-6 md:px-8 flex flex-col items-center">
+              {/* 結果は… (大きめの文字にして左に寄せる) */}
+              <div className="w-full max-w-[280px] md:max-w-[320px] text-left mb-1">
+                <p className="text-2xl md:text-3xl font-extrabold text-[#2a241e]">結果は…</p>
+              </div>
+
+              {/* 点数表示と「点でした」を配置（点でしたを右端に配置） */}
+              <div className="w-full max-w-[280px] md:max-w-[320px] flex flex-col items-center justify-center my-2 mb-4 gap-2 relative">
+                <div className="w-48 h-48 md:w-56 md:h-56 rounded-full bg-[#D5512A] flex items-center justify-center shadow-lg shrink-0">
+                  <span className="text-7xl md:text-8xl font-black text-[#DDB442] tracking-tighter">
+                    {critique.score}
+                  </span>
+                </div>
+                <div className="w-full flex items-baseline justify-end pr-2">
+                  <span className="text-4xl md:text-5xl font-extrabold text-[#D5512A]">点</span>
+                  <span className="text-xl md:text-2xl font-bold text-black">で</span>
+                  <span className="text-xl md:text-2xl font-bold text-black">し</span>
+                  <span className="text-xl md:text-2xl font-bold text-black">た</span>
+                </div>
+              </div>
+
+              {/* お手本 vs あなたの写真比較（隙間を狭く調整） */}
+              <div className="w-full grid grid-cols-2 gap-4 mt-2 mb-10">
+                <div className="flex flex-col items-center">
+                  <span className="text-lg font-extrabold text-[#2a241e] mb-2">お手本</span>
+                  <div className="w-full aspect-[3/4] rounded-lg overflow-hidden shadow-md bg-[#c2b59b] border border-[#8c7863] flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=400"
+                      alt="お手本"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <span className="text-lg font-extrabold text-[#2a241e] mb-2">あなた</span>
+                  <div className="w-full aspect-[3/4] rounded-lg overflow-hidden shadow-md bg-[#c2b59b] border border-[#8c7863] flex items-center justify-center">
+                    {capturedImage ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={capturedImage}
+                        alt="あなたの撮影写真"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-4xl">🎭</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* 講評見出し（中央配置＆サイズ拡大） */}
+              <div className="w-full text-center mb-3">
+                <h3 className="text-2xl md:text-3xl font-extrabold text-[#2a241e] tracking-wide">
+                  講評
+                </h3>
+              </div>
+
+              {/* 講評コメントボックス（黄色いカード・緑のバッジなし、上下paddingと文字サイズ拡大） */}
+              <div className="w-full bg-[#DDB442] rounded-2xl py-10 px-8 mb-6 shadow-md flex flex-col items-center text-center">
+                <p className="text-xl md:text-2xl font-bold text-[#2a241e] leading-relaxed whitespace-pre-wrap">
+                  {critique.comment}
+                </p>
+              </div>
+
+              {/* 下部リンク (左：もう一度挑戦 / 右：選択画面へ) */}
+              <div className="w-full flex items-center justify-between px-2 pt-6 pb-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCapturedImage(null);
+                    setCritique(null);
+                    setPhase("intro");
+                    setActiveStep(0);
+                  }}
+                  className="inline-flex items-center gap-2 text-base md:text-lg font-bold text-[#2a241e] hover:opacity-85 transition cursor-pointer"
+                >
+                  <span className="w-7 h-7 rounded-full bg-[#017824] text-white flex items-center justify-center text-xs shrink-0">
+                    ◀
+                  </span>
+                  <span>もう一度挑戦</span>
+                </button>
+
+                <a
+                  href="/challenge"
+                  className="inline-flex items-center gap-2 text-base md:text-lg font-bold text-[#2a241e] hover:opacity-85 transition"
+                >
+                  <span>選択画面へ</span>
+                  <span className="w-7 h-7 rounded-full bg-[#017824] text-white flex items-center justify-center text-xs shrink-0">
+                    ▶
+                  </span>
+                </a>
+              </div>
+            </div>
           </div>
         )}
 
