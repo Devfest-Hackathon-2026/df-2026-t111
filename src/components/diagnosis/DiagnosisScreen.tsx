@@ -107,7 +107,7 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     restChars: "",
     subtitle: "和風ダークファンタジー",
     description:
-      "能は、幽霊や神仏、怨霊の想いを描く世界最古の現存舞台芸術。独特の能面（おもて）は角度によって喜怒哀楽を変え、研ぎ澄まされたミニマルな動きと空間は、まるでダークファンタジーの深淵を覗くような神秘の没入感をもたらします。",
+      "能は、幽霊や神仏、怨霊の想いを描く世界最古の現存舞台芸術。独特の能面は角度によって表情を変え、神秘的な没入感をもたらします。",
     detailsLinkText: "能を詳しく見てみる →",
     detailTitle: "能（能楽）の魅力",
     detailText:
@@ -117,7 +117,7 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     photos: [
       {
         url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80",
-        caption: "一、角度で表情を変える神秘の能面",
+        caption: "一、神秘の能面",
       },
       {
         url: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&auto=format&fit=crop&q=80",
@@ -134,7 +134,7 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     restChars: "楽",
     subtitle: "神業ミニチュア×人間ドラマ",
     description:
-      "文楽（人形浄瑠璃）は、3人の人形遣いが1体の人形に命を吹き込み、物語を語る太夫と三味線が心を震わせる世界最高峰の人形劇。愛憎劇や人間の葛藤を驚くほどリアルかつ情熱的に描き、現代のドラマやアニメ以上に胸に迫るストーリーが特徴です。",
+      "文楽（人形浄瑠璃）は、3人の人形遣いが1体の人形に命を吹き込み、物語を語る太夫と三味線が心を震わせる世界最高峰の人形劇。愛憎劇や人間の葛藤を驚くほどリアルかつ情熱的に描きます。",
     detailsLinkText: "文楽を詳しく見てみる →",
     detailTitle: "文楽（人形浄瑠璃）の魅力",
     detailText:
@@ -161,7 +161,7 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     restChars: "舞伎",
     subtitle: "ド派手な和風ヒーローショー",
     description:
-      "歌舞伎は、ダイナミックなアクション、息を呑む早変わり、豪華絢爛な舞台装置で観客を圧倒する総合エンターテインメント。バタバタッと鳴るツケの音とともにビシッと決める「見得（みえ）」は、まさに現代のアクション映画やアメコミヒーローの原点です。",
+      "歌舞伎は、ダイナミックなアクション、息を呑む早変わり、豪華絢爛な舞台装置で観客を圧倒する総合エンターテインメント。バタバタッと鳴るツケの音とともにビシッと決める「見得」は、まさに現代のアクション映画やアメコミヒーローの原点です。",
     detailsLinkText: "歌舞伎を詳しく見てみる →",
     detailTitle: "歌舞伎の魅力",
     detailText:
@@ -199,20 +199,18 @@ function shuffleArray<T>(array: readonly T[]): T[] {
 export function DiagnosisScreen() {
   const router = useRouter();
 
-  // 初期状態は固定順で持ち、マウント後にクライアント側でシャッフル（プリレンダリングエラー防止）
   const [questions, setQuestions] = useState<Question[]>(MASTER_QUESTIONS);
   const [currentIdx, setCurrentIdx] = useState<number>(0);
   const [answers, setAnswers] = useState<(ArtType | null)[]>(new Array(7).fill(null));
   const [phase, setPhase] = useState<"quiz" | "result">("quiz");
-  const [resultType, setResultType] = useState<ArtType>("bunraku");
+  const [resultType, setResultType] = useState<ArtType>("noh");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [activePhotoIdx, setActivePhotoIdx] = useState<number>(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const carouselRef = useRef<HTMLDivElement | null>(null);
 
+  // マウント後にシャッフル（プリレンダリング対応）
   useEffect(() => {
-    // クライアント側でのみシャッフルを実行
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuestions(
       shuffleArray(MASTER_QUESTIONS).map((q) => ({
@@ -222,7 +220,7 @@ export function DiagnosisScreen() {
     );
   }, []);
 
-  // 選択肢タップ時の処理（約220ms後にサクサク自動遷移）
+  // 選択肢タップ時の処理（約220ms後に次へ自動遷移）
   const handleSelectOption = (selectedType: ArtType) => {
     const updated = [...answers];
     updated[currentIdx] = selectedType;
@@ -244,9 +242,9 @@ export function DiagnosisScreen() {
       if (t) tally[t]++;
     });
 
-    let maxType: ArtType = "bunraku";
+    let maxType: ArtType = "noh";
     let maxScore = -1;
-    const order: ArtType[] = ["bunraku", "kabuki", "noh"];
+    const order: ArtType[] = ["noh", "kabuki", "bunraku"];
     for (const t of order) {
       if (tally[t] > maxScore) {
         maxScore = tally[t];
@@ -256,7 +254,6 @@ export function DiagnosisScreen() {
 
     setResultType(maxType);
     setPhase("result");
-    setActivePhotoIdx(0);
   };
 
   // 前の質問へ
@@ -274,30 +271,22 @@ export function DiagnosisScreen() {
     }
   };
 
-  // 診断を最初からやり直す
+  // リセット
   const handleReset = () => {
-    const shuffled = shuffleArray(MASTER_QUESTIONS).map((q) => ({
-      ...q,
-      options: shuffleArray(q.options),
-    }));
-    setQuestions(shuffled);
+    setQuestions(
+      shuffleArray(MASTER_QUESTIONS).map((q) => ({
+        ...q,
+        options: shuffleArray(q.options),
+      }))
+    );
     setCurrentIdx(0);
     setAnswers(new Array(7).fill(null));
     setPhase("quiz");
   };
 
-  // カルーセルのスクロール検知
-  const handleCarouselScroll = () => {
-    if (!carouselRef.current) return;
-    const el = carouselRef.current;
-    const itemWidth = el.scrollWidth / 3;
-    const idx = Math.round(el.scrollLeft / itemWidth);
-    setActivePhotoIdx(Math.min(2, Math.max(0, idx)));
-  };
-
   // 体験フェーズへ進む
-  const handleTriggerExperience = (targetType = resultType) => {
-    const info = RESULTS_DATA[targetType];
+  const handleTriggerExperience = () => {
+    const info = RESULTS_DATA[resultType];
     setToastMessage(`⛩️ ${info.challengeName}へ移動します`);
 
     setTimeout(() => {
@@ -310,177 +299,115 @@ export function DiagnosisScreen() {
 
   return (
     <div className={styles.diagnosisRoot}>
-      {/* 開発・デモ用コントロールバー */}
-      <div className={styles.previewBar}>
-        <div className={styles.previewLabel}>
-          <span>画面切り替え:</span>
-        </div>
-        <div className={styles.previewButtons}>
-          <button
-            type="button"
-            className={`${styles.previewBtn} ${phase === "quiz" ? styles.active : ""}`}
-            onClick={() => setPhase("quiz")}
-          >
-            質問画面
-          </button>
-          <button
-            type="button"
-            className={`${styles.previewBtn} ${phase === "result" && resultType === "bunraku" ? styles.active : ""}`}
-            onClick={() => {
-              setResultType("bunraku");
-              setPhase("result");
-            }}
-          >
-            結果：文楽
-          </button>
-          <button
-            type="button"
-            className={`${styles.previewBtn} ${phase === "result" && resultType === "kabuki" ? styles.active : ""}`}
-            onClick={() => {
-              setResultType("kabuki");
-              setPhase("result");
-            }}
-          >
-            結果：歌舞伎
-          </button>
-          <button
-            type="button"
-            className={`${styles.previewBtn} ${phase === "result" && resultType === "noh" ? styles.active : ""}`}
-            onClick={() => {
-              setResultType("noh");
-              setPhase("result");
-            }}
-          >
-            結果：能
-          </button>
-          <button
-            type="button"
-            className={styles.previewBtn}
-            onClick={handleReset}
-            title="最初からやり直す"
-          >
-            ↺ やり直す
-          </button>
-        </div>
-      </div>
-
-      {/* 端末外枠コンテナ */}
-      <div className={styles.deviceWrapper}>
-        <div className={styles.deviceNotch} />
-
-        <div className={styles.appScreen}>
-          {/* ヘッダー（質問画面のみ表示） */}
-          {phase === "quiz" && (
-            <header className={styles.screenHeader}>
-              <div className={styles.headerActions}>
-                <button
-                  type="button"
-                  className={styles.skipBtn}
-                  onClick={() => finishAndCalculate()}
-                >
-                  診断を終える
-                </button>
-                <button
-                  type="button"
-                  className={styles.headerCloseBtn}
-                  onClick={handleReset}
-                  aria-label="リセット"
-                >
-                  ✕
-                </button>
-              </div>
-            </header>
-          )}
-
-          {/* 進捗インジケーター（質問画面のみ表示） */}
-          {phase === "quiz" && (
-            <div className={styles.progressBarContainer}>
-              {Array.from({ length: 7 }).map((_, i) => {
-                let dotClass = styles.unanswered;
-                if (i === currentIdx) {
-                  dotClass = styles.current;
-                } else if (answers[i] !== null) {
-                  dotClass = styles.answered;
-                }
-                return (
-                  <span
-                    key={i}
-                    className={`${styles.progressDot} ${dotClass}`}
-                  />
-                );
-              })}
+      <div className={styles.screenContainer}>
+        {/* ヘッダー（質問画面のみ表示） */}
+        {phase === "quiz" && (
+          <header className={styles.screenHeader}>
+            <div className={styles.headerActions}>
+              <button
+                type="button"
+                className={styles.skipBtn}
+                onClick={() => finishAndCalculate()}
+              >
+                診断を終える
+              </button>
+              <button
+                type="button"
+                className={styles.headerCloseBtn}
+                onClick={handleReset}
+                aria-label="リセット"
+              >
+                ✕
+              </button>
             </div>
+          </header>
+        )}
+
+        {/* 進捗インジケーター（質問画面のみ表示） */}
+        {phase === "quiz" && (
+          <div className={styles.progressBarContainer}>
+            {Array.from({ length: 7 }).map((_, i) => {
+              let dotClass = styles.unanswered;
+              if (i === currentIdx) {
+                dotClass = styles.current;
+              } else if (answers[i] !== null) {
+                dotClass = styles.answered;
+              }
+              return (
+                <span key={i} className={`${styles.progressDot} ${dotClass}`} />
+              );
+            })}
+          </div>
+        )}
+
+        {/* メイン画面本体 */}
+        <main className={styles.screenBody}>
+          {/* ======================= */}
+          {/* 画面1: 質問・診断フェーズ */}
+          {/* ======================= */}
+          {phase === "quiz" && currentQuestion && (
+            <section className={styles.quizView}>
+              <div className={styles.questionSection}>
+                <div className={styles.questionBadge}>
+                  第 {currentIdx + 1} 問
+                </div>
+                <h2 className={styles.questionText}>
+                  {currentQuestion.text}
+                </h2>
+              </div>
+
+              <div className={styles.optionsList}>
+                {currentQuestion.options.map((opt, i) => {
+                  const isSelected = answers[currentIdx] === opt.type;
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      className={`${styles.optionButton} ${isSelected ? styles.selected : ""}`}
+                      onClick={() => handleSelectOption(opt.type)}
+                    >
+                      {opt.text}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <footer className={styles.quizNavigation}>
+                <button
+                  type="button"
+                  className={`${styles.navArrowBtn} ${currentIdx === 0 ? styles.disabled : ""}`}
+                  onClick={handlePrev}
+                  disabled={currentIdx === 0}
+                >
+                  <span className={styles.circleIcon}>◀</span>
+                  <span>前の質問へ</span>
+                </button>
+
+                <button
+                  type="button"
+                  className={`${styles.navArrowBtn} ${answers[currentIdx] === null ? styles.disabled : ""}`}
+                  onClick={handleNext}
+                  disabled={answers[currentIdx] === null}
+                >
+                  <span>{currentIdx === 6 ? "結果を見る" : "次の質問へ"}</span>
+                  <span className={styles.circleIcon}>▶</span>
+                </button>
+              </footer>
+            </section>
           )}
 
-          {/* メイン画面本体 */}
-          <main className={styles.screenBody}>
-            {/* ======================= */}
-            {/* 画面1: 質問・診断フェーズ */}
-            {/* ======================= */}
-            {phase === "quiz" && currentQuestion && (
-              <section className={styles.quizView}>
-                <div className={styles.questionSection}>
-                  <div className={styles.questionBadge}>
-                    第 {currentIdx + 1} 問
-                  </div>
-                  <h2 className={styles.questionText}>
-                    {currentQuestion.text}
-                  </h2>
-                </div>
-
-                <div className={styles.optionsList}>
-                  {currentQuestion.options.map((opt, i) => {
-                    const isSelected = answers[currentIdx] === opt.type;
-                    return (
-                      <button
-                        key={i}
-                        type="button"
-                        className={`${styles.optionButton} ${isSelected ? styles.selected : ""}`}
-                        onClick={() => handleSelectOption(opt.type)}
-                      >
-                        {opt.text}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <footer className={styles.quizNavigation}>
-                  <button
-                    type="button"
-                    className={`${styles.navArrowBtn} ${currentIdx === 0 ? styles.disabled : ""}`}
-                    onClick={handlePrev}
-                    disabled={currentIdx === 0}
-                  >
-                    <span className={styles.circleIcon}>◀</span>
-                    <span>前の質問へ</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    className={`${styles.navArrowBtn} ${answers[currentIdx] === null ? styles.disabled : ""}`}
-                    onClick={handleNext}
-                    disabled={answers[currentIdx] === null}
-                  >
-                    <span>{currentIdx === 6 ? "結果を見る" : "次の質問へ"}</span>
-                    <span className={styles.circleIcon}>▶</span>
-                  </button>
-                </footer>
-              </section>
-            )}
-
-            {/* ======================= */}
-            {/* 画面2: 診断結果画面 */}
-            {/* ======================= */}
-            {phase === "result" && (
-              <section className={styles.resultView}>
+          {/* ======================= */}
+          {/* 画面2: 診断結果フェーズ */}
+          {/* ======================= */}
+          {phase === "result" && (
+            <section className={styles.resultView}>
+              <div className={styles.resultTopArea}>
                 <div className={styles.resultHeaderText}>あなたは…</div>
-
-                {/* サブタイトル */}
                 <div className={styles.resultSubtitleTop}>
                   {resultInfo.subtitle}
                 </div>
 
-                {/* バッジ表示（極太黒フチ・赤丸中心配置） */}
+                {/* バッジ表示 */}
                 <div className={styles.resultBadgeArea}>
                   <div className={styles.badgeContainer}>
                     <div className={styles.badgeFirstCharBox}>
@@ -517,156 +444,99 @@ export function DiagnosisScreen() {
                     <span className={styles.badgeTypeLabel}>タイプ</span>
                   </div>
                 </div>
+              </div>
 
-                {/* 3種類の芸能切り替えミニバッジ */}
-                <div className={styles.badgePreviewRow}>
-                  <button
-                    type="button"
-                    className={`${styles.miniBadgeBtn} ${resultType === "noh" ? styles.active : ""}`}
-                    onClick={() => {
-                      setResultType("noh");
-                      setActivePhotoIdx(0);
-                    }}
-                  >
-                    <div className={styles.miniBadgeCircle}>能</div>
-                    <span className={styles.miniBadgeLabel}>能</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.miniBadgeBtn} ${resultType === "kabuki" ? styles.active : ""}`}
-                    onClick={() => {
-                      setResultType("kabuki");
-                      setActivePhotoIdx(0);
-                    }}
-                  >
-                    <div
-                      className={styles.miniBadgeCircle}
-                      style={{ fontSize: "14px" }}
-                    >
-                      歌舞伎
-                    </div>
-                    <span className={styles.miniBadgeLabel}>歌舞伎</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={`${styles.miniBadgeBtn} ${resultType === "bunraku" ? styles.active : ""}`}
-                    onClick={() => {
-                      setResultType("bunraku");
-                      setActivePhotoIdx(0);
-                    }}
-                  >
-                    <div className={styles.miniBadgeCircle}>文楽</div>
-                    <span className={styles.miniBadgeLabel}>文楽</span>
-                  </button>
-                </div>
-
-                {/* 説明カード枠（写真＋細かい説明） */}
-                <div className={styles.resultCard}>
-                  {/* 写真カルーセル */}
-                  <div className={styles.photoCarouselWrapper}>
-                    <div
-                      className={styles.photoCarouselTrack}
-                      ref={carouselRef}
-                      onScroll={handleCarouselScroll}
-                    >
-                      {resultInfo.photos.map((p, idx) => (
-                        <div key={idx} className={styles.photoCard}>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={p.url}
-                            alt={p.caption}
-                            className={styles.photoImg}
-                            loading="lazy"
-                          />
-                          <div className={styles.photoCaption}>{p.caption}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className={styles.carouselIndicator}>
-                      {resultInfo.photos.map((_, idx) => (
-                        <span
-                          key={idx}
-                          className={`${styles.carouselDot} ${idx === activePhotoIdx ? styles.active : ""}`}
+              {/* 説明カード枠（写真カルーセル＋解説＋詳細リンク） */}
+              <div className={styles.resultCard}>
+                <div className={styles.photoCarouselWrapper}>
+                  <div className={styles.photoCarouselTrack} ref={carouselRef}>
+                    {resultInfo.photos.map((p, idx) => (
+                      <div key={idx} className={styles.photoCard}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={p.url}
+                          alt={p.caption}
+                          className={styles.photoImg}
+                          loading="lazy"
                         />
-                      ))}
-                    </div>
+                        <div className={styles.photoCaption}>{p.caption}</div>
+                      </div>
+                    ))}
                   </div>
-
-                  {/* 細かい説明 */}
-                  <p className={styles.resultCardText}>{resultInfo.description}</p>
-
-                  <button
-                    type="button"
-                    className={styles.resultDetailsLink}
-                    onClick={() => setIsModalOpen(true)}
-                  >
-                    {resultInfo.detailsLinkText}
-                  </button>
                 </div>
 
-                {/* 体験するボタン */}
-                <div className={styles.actionBtnArea}>
-                  <button
-                    type="button"
-                    className={styles.experienceBtn}
-                    onClick={() => handleTriggerExperience(resultType)}
-                  >
-                    体験する
-                  </button>
-                </div>
-              </section>
-            )}
-          </main>
+                <p className={styles.resultCardText}>{resultInfo.description}</p>
 
-          {/* トースト通知 */}
-          <div
-            className={`${styles.toastNotification} ${toastMessage ? styles.show : ""}`}
-          >
-            {toastMessage}
-          </div>
-
-          {/* モーダル: 詳しく見る */}
-          {isModalOpen && (
-            <div
-              className={styles.modalOverlay}
-              onClick={() => setIsModalOpen(false)}
-            >
-              <div
-                className={styles.modalSheet}
-                onClick={(e) => e.stopPropagation()}
-              >
                 <button
                   type="button"
-                  className={styles.modalCloseBtn}
-                  onClick={() => setIsModalOpen(false)}
+                  className={styles.resultDetailsLink}
+                  onClick={() => setIsModalOpen(true)}
                 >
-                  ✕
+                  {resultInfo.detailsLinkText}
                 </button>
-                <h3 className={styles.modalTitle}>{resultInfo.detailTitle}</h3>
-                <div className={styles.modalContent}>
-                  <p style={{ marginBottom: "12px", fontSize: "15px" }}>
-                    {resultInfo.detailText}
+              </div>
+
+              {/* 画面下部：体験するボタン */}
+              <div className={styles.experienceBtnArea}>
+                <button
+                  type="button"
+                  className={styles.experienceBtn}
+                  onClick={handleTriggerExperience}
+                >
+                  体験する
+                </button>
+              </div>
+            </section>
+          )}
+        </main>
+
+        {/* トースト通知 */}
+        <div
+          className={`${styles.toastNotification} ${toastMessage ? styles.show : ""}`}
+        >
+          {toastMessage}
+        </div>
+
+        {/* モーダル: 詳しく見る */}
+        {isModalOpen && (
+          <div
+            className={styles.modalOverlay}
+            onClick={() => setIsModalOpen(false)}
+          >
+            <div
+              className={styles.modalSheet}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                className={styles.modalCloseBtn}
+                onClick={() => setIsModalOpen(false)}
+              >
+                ✕
+              </button>
+              <h3 className={styles.modalTitle}>{resultInfo.detailTitle}</h3>
+              <div className={styles.modalContent}>
+                <p style={{ marginBottom: "12px", fontSize: "15px" }}>
+                  {resultInfo.detailText}
+                </p>
+                <div className={styles.modalActionCard}>
+                  <strong style={{ fontSize: "16px" }}>
+                    ✨ はじめての鑑賞のポイント
+                  </strong>
+                  <p
+                    style={{
+                      marginTop: "6px",
+                      fontSize: "14px",
+                      color: "#4b443c",
+                    }}
+                  >
+                    チケットはオンラインで手軽に購入可能。最近はイヤホンガイドの貸出や字幕表示もあり、予備知識がなくても物語に深く浸ることができます。
                   </p>
-                  <div className={styles.modalActionCard}>
-                    <strong style={{ fontSize: "16px" }}>
-                      ✨ はじめての鑑賞のポイント
-                    </strong>
-                    <p
-                      style={{
-                        marginTop: "6px",
-                        fontSize: "14px",
-                        color: "#4b443c",
-                      }}
-                    >
-                      チケットはオンラインで手軽に購入可能。最近はイヤホンガイドの貸出や字幕表示もあり、予備知識がなくても物語に深く浸ることができます。
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
