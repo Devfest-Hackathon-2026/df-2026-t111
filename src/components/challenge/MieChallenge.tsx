@@ -101,26 +101,40 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
     return () => stopCamera();
   }, []);
 
-  // ビデオ映像から撮影
+  // ビデオ映像から撮影（長辺最大1024pxに縮小）
   const handleCaptureFromVideo = () => {
     const video = videoRef.current;
     if (!video) return;
 
-    const width = video.videoWidth || 640;
-    const height = video.videoHeight || 480;
+    const rawWidth = video.videoWidth || 640;
+    const rawHeight = video.videoHeight || 480;
+
+    const MAX_DIMENSION = 1024;
+    let targetWidth = rawWidth;
+    let targetHeight = rawHeight;
+
+    if (rawWidth > MAX_DIMENSION || rawHeight > MAX_DIMENSION) {
+      if (rawWidth >= rawHeight) {
+        targetWidth = MAX_DIMENSION;
+        targetHeight = Math.round((rawHeight * MAX_DIMENSION) / rawWidth);
+      } else {
+        targetHeight = MAX_DIMENSION;
+        targetWidth = Math.round((rawWidth * MAX_DIMENSION) / rawHeight);
+      }
+    }
 
     const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     ctx.translate(canvas.width, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, targetWidth, targetHeight);
 
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
 
     const base64Data = dataUrl.split(",")[1] || "";
     const byteLength = Math.round((base64Data.length * 3) / 4);
@@ -135,26 +149,62 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
     setPhase("preview");
   };
 
-  // ファイル添付撮影
+  // ファイル添付撮影（長辺最大1024pxに縮小）
   const handleFileCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (file.size > MAX_IMAGE_BYTES) {
-      setErrorMessage("写真のサイズが5MBを超えているか、対応していない形式です。");
-      return;
-    }
-
     const reader = new FileReader();
     reader.onload = (e) => {
       const dataUrl = e.target?.result as string;
-      setCapturedImage(dataUrl);
-      setPhase("preview");
-      setActiveStep(1);
+      const img = new Image();
+      img.onload = () => {
+        const rawWidth = img.width;
+        const rawHeight = img.height;
+
+        const MAX_DIMENSION = 1024;
+        let targetWidth = rawWidth;
+        let targetHeight = rawHeight;
+
+        if (rawWidth > MAX_DIMENSION || rawHeight > MAX_DIMENSION) {
+          if (rawWidth >= rawHeight) {
+            targetWidth = MAX_DIMENSION;
+            targetHeight = Math.round((rawHeight * MAX_DIMENSION) / rawWidth);
+          } else {
+            targetHeight = MAX_DIMENSION;
+            targetWidth = Math.round((rawWidth * MAX_DIMENSION) / rawHeight);
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+        const resizedDataUrl = canvas.toDataURL("image/jpeg", 0.85);
+
+        const base64Data = resizedDataUrl.split(",")[1] || "";
+        const byteLength = Math.round((base64Data.length * 3) / 4);
+
+        if (byteLength > MAX_IMAGE_BYTES) {
+          setErrorMessage("写真のサイズが大きすぎます。もう一度撮影してください。");
+          return;
+        }
+
+        setCapturedImage(resizedDataUrl);
+        setPhase("preview");
+        setActiveStep(1);
+      };
+      img.onerror = () => {
+        setErrorMessage("画像の読み込みに失敗しました。別の写真をお試しください。");
+      };
+      img.src = dataUrl;
     };
     reader.readAsDataURL(file);
   };
-
   // 撮り直し
   const handleRetake = () => {
     setCapturedImage(null);
