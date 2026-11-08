@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap');
 
-.diagnosisRoot {
+.diagnosis-root {
   --bg-japanese: #d8cdba;
   --bg-card: #e8e0d1;
   --text-main: #2b251f;
@@ -11,7 +11,7 @@
   --gold-btn-text: #221b10;
   --green-accent: #196a39;
   --orange-accent: #d94d22;
-  --dot-unanswered: #6e6459;
+  --dot-unanswered: #4b443c;
   --badge-red: #d14725;
   --badge-yellow: #f4c844;
 
@@ -29,7 +29,7 @@
   box-sizing: border-box;
 }
 
-.diagnosisRoot * {
+.diagnosis-root * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -40,7 +40,7 @@
 }
 
 /* モバイル表示コンテナ（カンプに合わせたスマホ幅） */
-.screenContainer {
+.diagnosis-root .screen-container {
   position: relative;
   width: 100%;
   max-width: 414px;
@@ -52,7 +52,7 @@
 }
 
 /* ヘッダー（質問画面のみ表示） */
-.screenHeader {
+.diagnosis-root .screen-header {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -61,13 +61,13 @@
   z-index: 10;
 }
 
-.headerActions {
+.diagnosis-root .header-actions {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.skipBtn {
+.diagnosis-root .skip-btn {
   background: transparent;
   border: none;
   font-size: 15px;
@@ -80,11 +80,11 @@
   padding: 4px;
 }
 
-.skipBtn:hover {
+.diagnosis-root .skip-btn:hover {
   color: var(--orange-accent);
 }
 
-.headerCloseBtn {
+.diagnosis-root .header-close-btn {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -101,12 +101,12 @@
   transition: transform 0.15s ease;
 }
 
-.headerCloseBtn:hover {
+.diagnosis-root .header-close-btn:hover {
   transform: scale(1.08);
 }
 
 /* 進捗インジケーター（7つの丸） */
-.progressBarContainer {
+.diagnosis-root .progress-bar-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -114,26 +114,26 @@
   padding: 10px 0 18px 0;
 }
 
-.progressDot {
+.diagnosis-root .progress-dot {
   display: inline-block;
   border-radius: 50%;
   transition: all 0.25s ease;
 }
 
-.progressDot.answered {
+.diagnosis-root .progress-dot.answered {
   width: 14px;
   height: 14px;
   background-color: var(--green-accent);
 }
 
-.progressDot.current {
+.diagnosis-root .progress-dot.current {
   width: 16px;
   height: 16px;
   background-color: var(--orange-accent);
   transform: scale(1.1);
 }
 
-.progressDot.unanswered {
+.diagnosis-root .progress-dot.unanswered {
   width: 6px;
   height: 6px;
   background-color: var(--dot-unanswered);
@@ -141,27 +141,27 @@
 }
 
 /* メインコンテンツ枠 */
-.screenBody {
+.diagnosis-root .screen-body {
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 /* --- 質問画面 --- */
-.quizView {
+.diagnosis-root .quiz-view {
   display: flex;
   flex-direction: column;
   flex: 1;
   justify-content: space-between;
 }
 
-.questionSection {
+.diagnosis-root .question-section {
   margin-top: 4px;
   margin-bottom: 24px;
   text-align: center;
 }
 
-.questionBadge {
+.diagnosis-root .question-badge {
   display: inline-block;
   font-size: 17px;
   color: var(--green-accent);
@@ -170,7 +170,7 @@
   letter-spacing: 0.12em;
 }
 
-.questionText {
+.diagnosis-root .question-text {
   font-size: 22px;
   font-weight: 700;
   line-height: 1.45;
@@ -179,14 +179,14 @@
 }
 
 /* 選択肢リスト */
-.optionsList {
+.diagnosis-root .options-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-bottom: auto;
 }
 
-.optionButton {
+.diagnosis-root .option-button {
   background-color: var(--gold-btn);
   color: var(--gold-btn-text);
   border: 1px solid #c29532;
@@ -201,18 +201,18 @@
   line-height: 1.45;
 }
 
-.optionButton:hover {
+.diagnosis-root .option-button:hover {
   background-color: var(--gold-btn-hover);
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
 }
 
-.optionButton:active {
+.diagnosis-root .option-button:active {
   transform: translateY(1px);
   background-color: var(--gold-btn-active);
 }
 
-.optionButton.selected {
+.diagnosis-root .option-button.selected {
   background-color: var(--orange-accent) !important;
   color: #ffffff !important;
   border-color: #b83a15 !important;
@@ -220,7 +220,7 @@
 }
 
 /* 下部ナビゲーション */
-.quizNavigation {
+.diagnosis-root .quiz-navigation {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -228,7 +228,7 @@
   padding-bottom: 12px;
 }
 
-.navArrowBtn {
+.diagnosis-root .nav-arrow-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -242,17 +242,17 @@
   padding: 4px;
 }
 
-.navArrowBtn:active {
+.diagnosis-root .nav-arrow-btn:active {
   transform: scale(0.97);
 }
 
-.navArrowBtn.disabled {
+.diagnosis-root .nav-arrow-btn.disabled {
   opacity: 0.3 !important;
   pointer-events: none !important;
   cursor: not-allowed;
 }
 
-.circleIcon {
+.diagnosis-root .circle-icon {
   width: 26px;
   height: 26px;
   background: var(--green-accent);
@@ -265,7 +265,7 @@
 }
 
 /* --- 診断結果画面 --- */
-.resultView {
+.diagnosis-root .result-view {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -273,14 +273,14 @@
   padding-top: 10px;
 }
 
-.resultTopArea {
+.diagnosis-root .result-top-area {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 12px;
 }
 
-.resultHeaderText {
+.diagnosis-root .result-header-text {
   font-size: 19px;
   font-weight: 700;
   color: #2b251f;
@@ -288,7 +288,7 @@
   margin-bottom: 4px;
 }
 
-.resultSubtitleTop {
+.diagnosis-root .result-subtitle-top {
   font-size: 18px;
   font-weight: 700;
   color: #c93b16;
@@ -298,7 +298,7 @@
 }
 
 /* バッジ（カンプの極太黒フチ・赤丸中心配置） */
-.resultBadgeArea {
+.diagnosis-root .result-badge-area {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -306,14 +306,14 @@
   margin-bottom: 14px;
 }
 
-.badgeContainer {
+.diagnosis-root .badge-container {
   display: inline-flex;
   align-items: center;
   position: relative;
   padding-right: 48px;
 }
 
-.badgeFirstCharBox {
+.diagnosis-root .badge-first-char-box {
   position: relative;
   width: 96px;
   height: 96px;
@@ -323,7 +323,7 @@
   flex-shrink: 0;
 }
 
-.badgeRedCircle {
+.diagnosis-root .badge-red-circle {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -336,14 +336,14 @@
   z-index: 1;
 }
 
-.badgeRestCharsBox {
+.diagnosis-root .badge-rest-chars-box {
   display: flex;
   align-items: center;
   margin-left: -4px;
   z-index: 2;
 }
 
-.badgeCharText {
+.diagnosis-root .badge-char-text {
   position: relative;
   z-index: 2;
   font-weight: 900;
@@ -368,7 +368,7 @@
   text-align: center;
 }
 
-.badgeTypeLabel {
+.diagnosis-root .badge-type-label {
   position: absolute;
   right: 0;
   bottom: 8px;
@@ -379,7 +379,7 @@
 }
 
 /* 説明カード枠（薄いクリーム色の背景） */
-.resultCard {
+.diagnosis-root .result-card {
   background-color: #efe8dc;
   border-radius: 18px;
   padding: 16px 14px 14px 14px;
@@ -392,11 +392,11 @@
 }
 
 /* カルーセル画像 */
-.photoCarouselWrapper {
+.diagnosis-root .photo-carousel-wrapper {
   width: 100%;
 }
 
-.photoCarouselTrack {
+.diagnosis-root .photo-carousel-track {
   display: flex;
   gap: 10px;
   overflow-x: auto;
@@ -406,11 +406,11 @@
   scrollbar-width: none;
 }
 
-.photoCarouselTrack::-webkit-scrollbar {
+.diagnosis-root .photo-carousel-track::-webkit-scrollbar {
   display: none;
 }
 
-.photoCard {
+.diagnosis-root .photo-card {
   flex: 0 0 84%;
   scroll-snap-align: center;
   background: #fdfaf6;
@@ -419,7 +419,7 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
 }
 
-.photoImg {
+.diagnosis-root .photo-img {
   width: 100%;
   height: 128px;
   object-fit: cover;
@@ -427,7 +427,7 @@
   background: #c5bba8;
 }
 
-.photoCaption {
+.diagnosis-root .photo-caption {
   padding: 5px 8px;
   font-size: 12.5px;
   font-weight: 700;
@@ -437,14 +437,14 @@
 }
 
 /* 説明文テキスト */
-.resultCardText {
+.diagnosis-root .result-card-text {
   font-size: 15px;
   line-height: 1.68;
   color: #3b332a;
   text-align: justify;
 }
 
-.resultDetailsLink {
+.diagnosis-root .result-details-link {
   display: block;
   text-align: right;
   font-size: 14.5px;
@@ -459,17 +459,17 @@
   align-self: flex-end;
 }
 
-.resultDetailsLink:hover {
+.diagnosis-root .result-details-link:hover {
   color: var(--green-accent);
 }
 
 /* 画面最下部の体験するボタン（横幅いっぱい） */
-.experienceBtnArea {
+.diagnosis-root .experience-btn-area {
   padding-bottom: 12px;
   width: 100%;
 }
 
-.experienceBtn {
+.diagnosis-root .experience-btn {
   width: 100%;
   background-color: var(--gold-btn);
   color: var(--gold-btn-text);
@@ -485,19 +485,19 @@
   text-align: center;
 }
 
-.experienceBtn:hover {
+.diagnosis-root .experience-btn:hover {
   background-color: var(--gold-btn-hover);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
 }
 
-.experienceBtn:active {
+.diagnosis-root .experience-btn:active {
   transform: translateY(1px);
   background-color: var(--gold-btn-active);
 }
 
 /* トースト通知 */
-.toastNotification {
+.diagnosis-root .toast-notification {
   position: fixed;
   bottom: 80px;
   left: 50%;
@@ -517,13 +517,13 @@
   border: 1px solid rgba(255, 216, 138, 0.3);
 }
 
-.toastNotification.show {
+.diagnosis-root .toast-notification.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
 
 /* モーダル */
-.modalOverlay {
+.diagnosis-root .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -537,7 +537,7 @@
   justify-content: center;
 }
 
-.modalSheet {
+.diagnosis-root .modal-sheet {
   background: var(--bg-japanese);
   width: 100%;
   max-width: 414px;
@@ -549,7 +549,7 @@
   position: relative;
 }
 
-.modalCloseBtn {
+.diagnosis-root .modal-close-btn {
   position: absolute;
   top: 16px;
   right: 16px;
@@ -567,7 +567,7 @@
   font-weight: bold;
 }
 
-.modalTitle {
+.diagnosis-root .modal-title {
   font-size: 20px;
   font-weight: 700;
   color: #1f1b16;
@@ -575,13 +575,13 @@
   padding-right: 36px;
 }
 
-.modalContent {
+.diagnosis-root .modal-content {
   font-size: 14.5px;
   line-height: 1.7;
   color: #332a22;
 }
 
-.modalActionCard {
+.diagnosis-root .modal-action-card {
   margin-top: 14px;
   padding: 12px;
   background: var(--bg-card);

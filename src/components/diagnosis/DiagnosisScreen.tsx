@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "./diagnosis.module.css";
+import "./diagnosis.css";
 
 export type ArtType = "noh" | "bunraku" | "kabuki";
 
@@ -209,7 +209,6 @@ export function DiagnosisScreen() {
 
   const carouselRef = useRef<HTMLDivElement | null>(null);
 
-  // マウント後にシャッフル（プリレンダリング対応）
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuestions(
@@ -220,7 +219,6 @@ export function DiagnosisScreen() {
     );
   }, []);
 
-  // 選択肢タップ時の処理（約220ms後に次へ自動遷移）
   const handleSelectOption = (selectedType: ArtType) => {
     const updated = [...answers];
     updated[currentIdx] = selectedType;
@@ -235,7 +233,6 @@ export function DiagnosisScreen() {
     }, 220);
   };
 
-  // 集計して結果を表示
   const finishAndCalculate = (currentAnswers = answers) => {
     const tally: Record<ArtType, number> = { noh: 0, bunraku: 0, kabuki: 0 };
     currentAnswers.forEach((t) => {
@@ -256,12 +253,10 @@ export function DiagnosisScreen() {
     setPhase("result");
   };
 
-  // 前の質問へ
   const handlePrev = () => {
     if (currentIdx > 0) setCurrentIdx((prev) => prev - 1);
   };
 
-  // 次の質問へ（手動クリック）
   const handleNext = () => {
     if (answers[currentIdx] === null) return;
     if (currentIdx < 6) {
@@ -271,7 +266,6 @@ export function DiagnosisScreen() {
     }
   };
 
-  // リセット
   const handleReset = () => {
     setQuestions(
       shuffleArray(MASTER_QUESTIONS).map((q) => ({
@@ -284,7 +278,6 @@ export function DiagnosisScreen() {
     setPhase("quiz");
   };
 
-  // 体験フェーズへ進む
   const handleTriggerExperience = () => {
     const info = RESULTS_DATA[resultType];
     setToastMessage(`⛩️ ${info.challengeName}へ移動します`);
@@ -298,22 +291,22 @@ export function DiagnosisScreen() {
   const resultInfo = RESULTS_DATA[resultType];
 
   return (
-    <div className={styles.diagnosisRoot}>
-      <div className={styles.screenContainer}>
+    <div className="diagnosis-root">
+      <div className="screen-container">
         {/* ヘッダー（質問画面のみ表示） */}
         {phase === "quiz" && (
-          <header className={styles.screenHeader}>
-            <div className={styles.headerActions}>
+          <header className="screen-header">
+            <div className="header-actions">
               <button
                 type="button"
-                className={styles.skipBtn}
+                className="skip-btn"
                 onClick={() => finishAndCalculate()}
               >
                 診断を終える
               </button>
               <button
                 type="button"
-                className={styles.headerCloseBtn}
+                className="header-close-btn"
                 onClick={handleReset}
                 aria-label="リセット"
               >
@@ -325,45 +318,45 @@ export function DiagnosisScreen() {
 
         {/* 進捗インジケーター（質問画面のみ表示） */}
         {phase === "quiz" && (
-          <div className={styles.progressBarContainer}>
+          <div className="progress-bar-container">
             {Array.from({ length: 7 }).map((_, i) => {
-              let dotClass = styles.unanswered;
+              let dotClass = "unanswered";
               if (i === currentIdx) {
-                dotClass = styles.current;
+                dotClass = "current";
               } else if (answers[i] !== null) {
-                dotClass = styles.answered;
+                dotClass = "answered";
               }
               return (
-                <span key={i} className={`${styles.progressDot} ${dotClass}`} />
+                <span key={i} className={`progress-dot ${dotClass}`} />
               );
             })}
           </div>
         )}
 
         {/* メイン画面本体 */}
-        <main className={styles.screenBody}>
+        <main className="screen-body">
           {/* ======================= */}
           {/* 画面1: 質問・診断フェーズ */}
           {/* ======================= */}
           {phase === "quiz" && currentQuestion && (
-            <section className={styles.quizView}>
-              <div className={styles.questionSection}>
-                <div className={styles.questionBadge}>
+            <section className="quiz-view">
+              <div className="question-section">
+                <div className="question-badge">
                   第 {currentIdx + 1} 問
                 </div>
-                <h2 className={styles.questionText}>
+                <h2 className="question-text">
                   {currentQuestion.text}
                 </h2>
               </div>
 
-              <div className={styles.optionsList}>
+              <div className="options-list">
                 {currentQuestion.options.map((opt, i) => {
                   const isSelected = answers[currentIdx] === opt.type;
                   return (
                     <button
                       key={i}
                       type="button"
-                      className={`${styles.optionButton} ${isSelected ? styles.selected : ""}`}
+                      className={`option-button ${isSelected ? "selected" : ""}`}
                       onClick={() => handleSelectOption(opt.type)}
                     >
                       {opt.text}
@@ -372,25 +365,25 @@ export function DiagnosisScreen() {
                 })}
               </div>
 
-              <footer className={styles.quizNavigation}>
+              <footer className="quiz-navigation">
                 <button
                   type="button"
-                  className={`${styles.navArrowBtn} ${currentIdx === 0 ? styles.disabled : ""}`}
+                  className={`nav-arrow-btn ${currentIdx === 0 ? "disabled" : ""}`}
                   onClick={handlePrev}
                   disabled={currentIdx === 0}
                 >
-                  <span className={styles.circleIcon}>◀</span>
+                  <span className="circle-icon">◀</span>
                   <span>前の質問へ</span>
                 </button>
 
                 <button
                   type="button"
-                  className={`${styles.navArrowBtn} ${answers[currentIdx] === null ? styles.disabled : ""}`}
+                  className={`nav-arrow-btn ${answers[currentIdx] === null ? "disabled" : ""}`}
                   onClick={handleNext}
                   disabled={answers[currentIdx] === null}
                 >
                   <span>{currentIdx === 6 ? "結果を見る" : "次の質問へ"}</span>
-                  <span className={styles.circleIcon}>▶</span>
+                  <span className="circle-icon">▶</span>
                 </button>
               </footer>
             </section>
@@ -400,20 +393,20 @@ export function DiagnosisScreen() {
           {/* 画面2: 診断結果フェーズ */}
           {/* ======================= */}
           {phase === "result" && (
-            <section className={styles.resultView}>
-              <div className={styles.resultTopArea}>
-                <div className={styles.resultHeaderText}>あなたは…</div>
-                <div className={styles.resultSubtitleTop}>
+            <section className="result-view">
+              <div className="result-top-area">
+                <div className="result-header-text">あなたは…</div>
+                <div className="result-subtitle-top">
                   {resultInfo.subtitle}
                 </div>
 
                 {/* バッジ表示 */}
-                <div className={styles.resultBadgeArea}>
-                  <div className={styles.badgeContainer}>
-                    <div className={styles.badgeFirstCharBox}>
-                      <div className={styles.badgeRedCircle} />
+                <div className="result-badge-area">
+                  <div className="badge-container">
+                    <div className="badge-first-char-box">
+                      <div className="badge-red-circle" />
                       <span
-                        className={styles.badgeCharText}
+                        className="badge-char-text"
                         style={{
                           fontSize:
                             resultInfo.restChars.length >= 2
@@ -428,9 +421,9 @@ export function DiagnosisScreen() {
                     </div>
 
                     {resultInfo.restChars && (
-                      <div className={styles.badgeRestCharsBox}>
+                      <div className="badge-rest-chars-box">
                         <span
-                          className={styles.badgeCharText}
+                          className="badge-char-text"
                           style={{
                             fontSize:
                               resultInfo.restChars.length >= 2 ? "48px" : "56px",
@@ -441,35 +434,35 @@ export function DiagnosisScreen() {
                       </div>
                     )}
 
-                    <span className={styles.badgeTypeLabel}>タイプ</span>
+                    <span className="badge-type-label">タイプ</span>
                   </div>
                 </div>
               </div>
 
               {/* 説明カード枠（写真カルーセル＋解説＋詳細リンク） */}
-              <div className={styles.resultCard}>
-                <div className={styles.photoCarouselWrapper}>
-                  <div className={styles.photoCarouselTrack} ref={carouselRef}>
+              <div className="result-card">
+                <div className="photo-carousel-wrapper">
+                  <div className="photo-carousel-track" ref={carouselRef}>
                     {resultInfo.photos.map((p, idx) => (
-                      <div key={idx} className={styles.photoCard}>
+                      <div key={idx} className="photo-card">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={p.url}
                           alt={p.caption}
-                          className={styles.photoImg}
+                          className="photo-img"
                           loading="lazy"
                         />
-                        <div className={styles.photoCaption}>{p.caption}</div>
+                        <div className="photo-caption">{p.caption}</div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <p className={styles.resultCardText}>{resultInfo.description}</p>
+                <p className="result-card-text">{resultInfo.description}</p>
 
                 <button
                   type="button"
-                  className={styles.resultDetailsLink}
+                  className="result-details-link"
                   onClick={() => setIsModalOpen(true)}
                 >
                   {resultInfo.detailsLinkText}
@@ -477,10 +470,10 @@ export function DiagnosisScreen() {
               </div>
 
               {/* 画面下部：体験するボタン */}
-              <div className={styles.experienceBtnArea}>
+              <div className="experience-btn-area">
                 <button
                   type="button"
-                  className={styles.experienceBtn}
+                  className="experience-btn"
                   onClick={handleTriggerExperience}
                 >
                   体験する
@@ -492,7 +485,7 @@ export function DiagnosisScreen() {
 
         {/* トースト通知 */}
         <div
-          className={`${styles.toastNotification} ${toastMessage ? styles.show : ""}`}
+          className={`toast-notification ${toastMessage ? "show" : ""}`}
         >
           {toastMessage}
         </div>
@@ -500,26 +493,26 @@ export function DiagnosisScreen() {
         {/* モーダル: 詳しく見る */}
         {isModalOpen && (
           <div
-            className={styles.modalOverlay}
+            className="modal-overlay"
             onClick={() => setIsModalOpen(false)}
           >
             <div
-              className={styles.modalSheet}
+              className="modal-sheet"
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
-                className={styles.modalCloseBtn}
+                className="modal-close-btn"
                 onClick={() => setIsModalOpen(false)}
               >
                 ✕
               </button>
-              <h3 className={styles.modalTitle}>{resultInfo.detailTitle}</h3>
-              <div className={styles.modalContent}>
+              <h3 className="modal-title">{resultInfo.detailTitle}</h3>
+              <div className="modal-content">
                 <p style={{ marginBottom: "12px", fontSize: "15px" }}>
                   {resultInfo.detailText}
                 </p>
-                <div className={styles.modalActionCard}>
+                <div className="modal-action-card">
                   <strong style={{ fontSize: "16px" }}>
                     ✨ はじめての鑑賞のポイント
                   </strong>
