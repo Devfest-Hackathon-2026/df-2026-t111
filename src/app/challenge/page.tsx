@@ -39,9 +39,9 @@ export default function ChallengeSelectPage() {
           </Link>
         </div>
 
-        {/* 文楽 */}
+        {/* 能楽 */}
         <div className="w-full flex flex-col items-center gap-2">
-          <h2 className="text-2xl font-bold text-[#2a241e] tracking-wide">文楽</h2>
+          <h2 className="text-2xl font-bold text-[#2a241e] tracking-wide">能楽</h2>
           <Link
             href="/challenge/nanori"
             className="w-full py-3.5 px-6 bg-[#D5512A] hover:bg-[#c24522] text-white font-extrabold text-xl rounded-xl border-2 border-[#2a241e] transition-all transform hover:-translate-y-0.5 active:translate-y-0.5 active:scale-[0.98] text-center"

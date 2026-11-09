@@ -1,972 +1,1028 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>おすすめ公演 - 日本三大芸能（能・文楽・歌舞伎）</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-japanese: #d8cdba;
-      --bg-card: #ece5d8;
-      --bg-card-border: #3b342d;
-      --text-main: #2b251f;
-      --text-sub: #524940;
-      --gold-btn: #d7a844;
-      --gold-btn-hover: #e4b64e;
-      --gold-btn-active: #c29532;
-      --gold-btn-text: #221b10;
-      --green-accent: #196a39;
-      --orange-accent: #d14725;
-      --star-color: #d99a18;
-      --filter-border: #4a4035;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-      font-family: "Yuji Syuku", serif !important;
-      font-weight: 400;
-      font-style: normal;
-    }
-
-    /* 水色のアウトラインやハイライトを完全排除 */
-    *:focus, *:focus-visible {
-      outline: none !important;
-      box-shadow: none !important;
-    }
-
-    body {
-      background-color: #1a1a1c;
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 16px 12px;
-    }
-
-    /* プレビュー用ツールバー */
-    .preview-bar {
-      width: 100%;
-      max-width: 420px;
-      margin-bottom: 12px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      padding: 10px 14px;
-      border-radius: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      justify-content: space-between;
-      color: #e5e5e5;
-      font-size: 13.5px;
-    }
-
-    .preview-label {
-      font-weight: 700;
-      color: #ffd27d;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .preview-buttons {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .preview-btn {
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 13px;
-      transition: all 0.2s ease;
-    }
-
-    .preview-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-1px);
-    }
-
-    .preview-btn.active {
-      background: #d7a844;
-      color: #201a11;
-      font-weight: 700;
-      border-color: #ffd57a;
-    }
-
-    /* 端末外枠コンテナ（iPhone 16比率） */
-    .device-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 400px;
-      height: 844px;
-      max-height: calc(100vh - 70px);
-      background: #111;
-      border-radius: 52px;
-      padding: 12px;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7),
-                  0 0 0 1px rgba(255, 255, 255, 0.15),
-                  inset 0 0 0 2px #333;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .device-notch {
-      position: absolute;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 110px;
-      height: 28px;
-      background: #000;
-      border-radius: 20px;
-      z-index: 100;
-      pointer-events: none;
-    }
-
-    /* 画面本体（iPhone 16 - 4） */
-    .app-screen {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background-color: var(--bg-japanese);
-      background-image: 
-        radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
-        radial-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
-      background-size: 20px 20px;
-      border-radius: 42px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* ヘッダー */
-    .screen-header {
-      padding: 42px 20px 8px 20px;
-      background: #d1c6b4;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      z-index: 20;
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .back-btn {
-      background: transparent;
-      border: none;
-      font-size: 15px;
-      font-weight: 700;
-      color: #3b342d;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: transform 0.15s ease;
-    }
-
-    .back-btn:hover {
-      transform: translateX(-2px);
-    }
-
-    .header-title-text {
-      font-size: 17px;
-      font-weight: 700;
-      color: #2b251f;
-    }
-
-    .header-genre-tag {
-      background: #196a39;
-      color: #fff;
-      font-size: 12px;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-weight: 700;
-    }
-
-    /* 画面コンテンツエリア */
-    .screen-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 12px 14px 14px 14px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* 「おすすめ公演」大見出し */
-    .page-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1a1510;
-      margin-bottom: 8px;
-      letter-spacing: 0.03em;
-    }
-
-    /* ======================================= */
-    /* 上質で洗練された和風2行条件選択テーブル */
-    /* ======================================= */
-    .filter-table-card {
-      width: 100%;
-      background: #ece4d6;
-      border: 1.5px solid var(--filter-border);
-      border-radius: 8px;
-      margin-bottom: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    }
-
-    .filter-table-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      text-align: center;
-    }
-
-    /* 1行目：題名ラベル（地域・予算・日程・誰と） */
-    .filter-header-row {
-      background: #ded4c3;
-      border-bottom: 1.2px solid var(--filter-border);
-      font-size: 13px;
-      font-weight: 700;
-      color: #4a3e30;
-      padding: 5px 0;
-      letter-spacing: 0.05em;
-    }
-
-    /* 2行目：選択肢プルダウン */
-    .filter-select-row {
-      background: #f4ede2;
-    }
-
-    .filter-col {
-      border-right: 1.2px solid var(--filter-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      position: relative;
-    }
-
-    .filter-col:last-child {
-      border-right: none;
-    }
-
-    /* プルダウンのスタイル（水色・デフォルト枠線の完全排除） */
-    .filter-dropdown {
-      width: 100%;
-      padding: 7px 2px;
-      background: transparent;
-      border: none;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: #1f1a14;
-      text-align: center;
-      text-align-last: center;
-      cursor: pointer;
-      outline: none !important;
-      box-shadow: none !important;
-      appearance: none;
-      -webkit-appearance: none;
-      transition: background 0.15s ease, color 0.15s ease;
-    }
-
-    .filter-dropdown:hover {
-      background: rgba(215, 168, 68, 0.15);
-      color: #d14725;
-    }
-
-    .filter-dropdown option {
-      background: #f4ede2;
-      color: #2b251f;
-      font-weight: 700;
-      padding: 6px;
-    }
-
-    /* カードスタック領域 */
-    .card-stack-container {
-      flex: 1;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 2px;
-      perspective: 1000px;
-    }
-
-    /* 重なり合うカード */
-    .stack-card {
-      position: absolute;
-      top: 0;
-      left: 18px; /* 左右の余白を均等にして中央配置 */
-      width: calc(100% - 36px);
-      height: 100%;
-      background: var(--bg-card);
-      border: 1.8px solid var(--bg-card-border);
-      border-radius: 20px;
-      padding: 13px 14px 11px 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-      transition: all 0.35s cubic-bezier(0.2, 0.8, 0.25, 1);
-      user-select: none;
-    }
-
-    /* 1枚目（最前面） */
-    .stack-card.card-0 {
-      z-index: 10;
-      transform: translateX(0) translateY(0) scale(1);
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    /* 2枚目 */
-    .stack-card.card-1 {
-      z-index: 8;
-      transform: translateX(8px) translateY(4px) scale(0.98);
-      opacity: 0.95;
-      pointer-events: none;
-    }
-
-    /* 3枚目 */
-    .stack-card.card-2 {
-      z-index: 6;
-      transform: translateX(16px) translateY(8px) scale(0.96);
-      opacity: 0.85;
-      pointer-events: none;
-    }
-
-    .stack-card.card-hidden {
-      z-index: 4;
-      transform: translateX(24px) translateY(12px) scale(0.94);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* 次へめくるアニメーション（左へ抜ける） */
-    .stack-card.card-flipping-next {
-      transform: translateX(-120%) rotate(-8deg);
-      opacity: 0;
-      transition: transform 0.38s ease-out, opacity 0.32s ease-out;
-    }
-
-    /* 前へ戻るアニメーション（左から戻ってくる） */
-    .stack-card.card-flipping-prev {
-      transform: translateX(-120%) rotate(-8deg);
-      opacity: 0;
-    }
-
-    /* 順位表示（第一位、第二位など） */
-    .rank-tag-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 2px;
-    }
-
-    .rank-badge {
-      display: inline-block;
-      background: #2b251f;
-      color: #ffd88a;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 2px 10px;
-      border-radius: 5px;
-      letter-spacing: 0.05em;
-    }
-
-    .card-counter {
-      font-size: 12px;
-      font-weight: 700;
-      color: #7a6e60;
-      background: rgba(0, 0, 0, 0.05);
-      padding: 1px 7px;
-      border-radius: 8px;
-    }
-
-    /* 公演名（大きく、朱色） */
-    .perf-title {
-      font-size: 23px;
-      font-weight: 700;
-      color: var(--orange-accent);
-      line-height: 1.28;
-      margin-bottom: 5px;
-      letter-spacing: 0.02em;
-    }
-
-    /* 条件一致度（星の数）の表示枠（地域に変更） */
-    .ratings-box {
-      background: rgba(0, 0, 0, 0.035);
-      border: 1px solid rgba(0, 0, 0, 0.07);
-      border-radius: 8px;
-      padding: 5px 10px;
-      margin-bottom: 7px;
-    }
-
-    .ratings-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      column-gap: 14px;
-      row-gap: 3px;
-    }
-
-    .rating-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 13.5px;
-      color: #2b251f;
-      font-weight: 700;
-    }
-
-    .rating-label {
-      letter-spacing: 0.08em;
-    }
-
-    .rating-stars {
-      color: var(--star-color);
-      font-size: 14.5px;
-      letter-spacing: 1px;
-    }
-
-    /* 4行の説明文（文字サイズを大きく・読みやすく） */
-    .perf-desc-4lines {
-      font-size: 14px; /* 大きく調整 */
-      line-height: 1.62;
-      color: #332a21;
-      text-align: justify;
-      margin-bottom: 5px;
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    /* ホームページへリンク（実リンク・新規タブ） */
-    .perf-hp-link {
-      display: inline-block;
-      font-size: 13.5px;
-      color: #2b251f;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      font-weight: 700;
-      margin-bottom: 6px;
-      cursor: pointer;
-      transition: color 0.15s ease, transform 0.15s ease;
-    }
-
-    .perf-hp-link:hover {
-      color: var(--green-accent);
-      transform: translateX(2px);
-    }
-
-    /* Google Map 枠（目的地ピンが中央に表示） */
-    .map-frame-box {
-      width: 100%;
-      height: 125px; /* 全体の縦幅に合わせて最適化 */
-      border: 1.5px solid #4a4237;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #ddd4c5;
-      position: relative;
-      margin-bottom: 7px;
-    }
-
-    .map-iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-    }
-
-    .map-pin-tag {
-      position: absolute;
-      bottom: 4px;
-      left: 6px;
-      background: rgba(255, 255, 255, 0.94);
-      padding: 2px 7px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      color: #2b251f;
-      pointer-events: none;
-      border: 1px solid rgba(0,0,0,0.12);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    /* カード下部アクション */
-    .card-bottom-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding-top: 2px;
-    }
-
-    .buy-ticket-btn {
-      flex: 1;
-      background-color: var(--gold-btn);
-      color: var(--gold-btn-text);
-      border: 1.5px solid #bf9233;
-      border-radius: 10px;
-      padding: 10px 10px;
-      font-size: 19px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-      transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-      text-align: center;
-      letter-spacing: 0.08em;
-    }
-
-    .buy-ticket-btn:hover {
-      background-color: var(--gold-btn-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
-    }
-
-    .buy-ticket-btn:active {
-      transform: translateY(1px);
-      background-color: var(--gold-btn-active);
-    }
-
-    /* 緑の丸いハートボタン */
-    .heart-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: var(--green-accent);
-      border: none;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 19px;
-      cursor: pointer;
-      box-shadow: 0 3px 8px rgba(25, 106, 57, 0.35);
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }
-
-    .heart-btn:hover {
-      transform: scale(1.08);
-      background: #1e7d44;
-    }
-
-    .heart-btn:active {
-      transform: scale(0.92);
-    }
-
-    .heart-btn.liked {
-      background: #d14725;
-      box-shadow: 0 3px 8px rgba(209, 71, 37, 0.4);
-    }
-
-    /* ======================================= */
-    /* 左右のめくり・戻るナビゲーション（常時アニメなし） */
-    /* ======================================= */
-    .card-nav-trigger {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 25;
-      transition: opacity 0.2s ease;
-    }
-
-    .card-nav-left {
-      left: -4px;
-    }
-
-    .card-nav-right {
-      right: -4px;
-    }
-
-    /* 常時モーションなし、落ち着いた和風のピルボタン */
-    .card-nav-pill {
-      background: rgba(43, 37, 31, 0.85);
-      color: #ffd88a;
-      width: 22px;
-      height: 48px;
-      border-radius: 11px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(255, 216, 138, 0.35);
-      transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
-    }
-
-    .card-nav-trigger:hover .card-nav-pill {
-      background: #d14725;
-      color: #fff;
-      transform: scale(1.08);
-    }
-
-    .card-nav-trigger.disabled {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* トースト通知 */
-    .toast-msg {
-      position: absolute;
-      bottom: 25px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: rgba(28, 24, 20, 0.95);
-      color: #ffd88a;
-      padding: 10px 18px;
-      border-radius: 20px;
-      font-size: 13.5px;
-      font-weight: 700;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.25s ease;
-      z-index: 120;
-      white-space: nowrap;
-      border: 1px solid rgba(255, 216, 138, 0.3);
-    }
-
-    .toast-msg.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-  </style>
-</head>
-<body>
-
-  <!-- 外部プレビュー・デバッグツールバー -->
-  <div class="preview-bar">
-    <div class="preview-label">
-      <span>🎭 芸能切り替え:</span>
-    </div>
-    <div class="preview-buttons">
-      <button class="preview-btn active" id="btn-genre-bunraku" onclick="switchGenre('bunraku')">人形浄瑠璃</button>
-      <button class="preview-btn" id="btn-genre-noh" onclick="switchGenre('noh')">能楽</button>
-      <button class="preview-btn" id="btn-genre-kabuki" onclick="switchGenre('kabuki')">歌舞伎</button>
-    </div>
-  </div>
-
-  <!-- iPhone 16 - 4 端末モックアップ -->
-  <div class="device-wrapper">
-    <div class="device-notch"></div>
-    
-    <div class="app-screen">
-      
-      <!-- ヘッダー -->
-      <header class="screen-header">
-        <div class="header-left">
-          <button class="back-btn" onclick="goBack()" title="診断結果に戻る">
-            <span>◀</span>
-            <span>戻る</span>
-          </button>
-        </div>
-        <span class="header-title-text" id="headerTitle">ヘッダー</span>
-        <span class="header-genre-tag" id="genreTag">人形浄瑠璃</span>
-      </header>
-
-      <!-- メインコンテンツ -->
-      <main class="screen-content">
-        
-        <!-- 大見出し -->
-        <h2 class="page-title">おすすめ公演</h2>
-
-        <!-- 洗練された和風2行テーブル（1行目題名、2行目選択肢、水色なし） -->
-        <div class="filter-table-card">
-          <!-- 1行目：題名（地域・予算・日程・誰と） -->
-          <div class="filter-table-row filter-header-row">
-            <div class="filter-col">地域</div>
-            <div class="filter-col">予算</div>
-            <div class="filter-col">日程</div>
-            <div class="filter-col">誰と</div>
-          </div>
-          <!-- 2行目：選択肢（初期設定：関西・お手軽・一か月以内・1人で） -->
-          <div class="filter-table-row filter-select-row">
-            <!-- 地域（エリアから地域に変更） -->
-            <div class="filter-col">
-              <select class="filter-dropdown" id="selArea" onchange="applyFilters()">
-                <option value="kansai" selected>関西</option>
-                <option value="kanto">関東</option>
-                <option value="tokai">東海</option>
-                <option value="other">その他</option>
-              </select>
-            </div>
-            <!-- 予算 -->
-            <div class="filter-col">
-              <select class="filter-dropdown" id="selBudget" onchange="applyFilters()">
-                <option value="cheap" selected>お手軽</option>
-                <option value="standard">標準</option>
-                <option value="rich">しっかり</option>
-              </select>
-            </div>
-            <!-- 日程 -->
-            <div class="filter-col">
-              <select class="filter-dropdown" id="selDate" onchange="applyFilters()">
-                <option value="month" selected>一か月以内</option>
-                <option value="next">来月以降</option>
-                <option value="weekend">土日のみ</option>
-                <option value="weekday">平日夜</option>
-              </select>
-            </div>
-            <!-- 誰と -->
-            <div class="filter-col">
-              <select class="filter-dropdown" id="selWho" onchange="applyFilters()">
-                <option value="alone" selected>1人で</option>
-                <option value="friends">友達と</option>
-                <option value="family">家族と</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <!-- スタックカード表示領域（中央配置） -->
-        <div class="card-stack-container" id="cardStackContainer">
-          <!-- JSで動的にスタックカードを生成 -->
-        </div>
-
-        <!-- 左側の戻るクリック領域（二位以降のときに表示、常時アニメなし） -->
-        <div class="card-nav-trigger card-nav-left disabled" id="prevCardTrigger" onclick="flipPrevCard()" title="前の公演カードに戻る">
-          <div class="card-nav-pill">
-            <span>❮</span>
-          </div>
-        </div>
-
-        <!-- 右側のめくりクリック領域（常時アニメなし） -->
-        <div class="card-nav-trigger card-nav-right" id="nextCardTrigger" onclick="flipNextCard()" title="次の公演カードをめくる">
-          <div class="card-nav-pill">
-            <span>❯</span>
-          </div>
-        </div>
-
-      </main>
-
-      <!-- トースト通知 -->
-      <div class="toast-msg" id="toastMsg"></div>
-
-    </div>
-  </div>
-
-  <script>
-    const rankNames = ["第一位", "第二位", "第三位", "第四位"];
-
-    // 公演マスターデータ（地域表記、4行詳細説明、Google Mapsピン、本物の公式HPリンク）
-    const performancesData = {
-      bunraku: [
-        {
-          id: "bunraku-1",
-          name: "国立文楽劇場 初心者鑑賞教室",
-          desc: "人形浄瑠璃の聖地・大阪日本橋で開催される、若者・初心者のための超人気入門公演です。太夫の迫真の語り分けや三人の人形遣いの息の合った神ワザを、親切な生解説付きで間近に体験できます。近松門左衛門の名作『曾根崎心中』のクライマックスは、涙なしには見られない感動が待っています。字幕表示や音声ガイドも完備されており、予備知識ゼロの1人観劇でも安心して世界観に深く没入できます。",
-          stars: { area: "★★★", budget: "★★★", date: "★★★", who: "★★★" },
-          ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
-          link: "https://www.ntj.jac.go.jp/bunraku.html",
-          venue: "国立文楽劇場（大阪・日本橋）",
-          mapEmbed: "https://maps.google.com/maps?q=%E5%9B%BD%E7%AB%8B%E6%96%87%E6%A5%BD%E5%8A%87%E5%A0%B4&z=15&output=embed"
-        },
-        {
-          id: "bunraku-2",
-          name: "近松記念館 伝統人形浄瑠璃公演",
-          desc: "近松門左衛門ゆかりの寺社が佇む歴史の街で開催される、地元密着の親しみやすい文楽公演です。客席と舞台の距離が驚くほど近く、人形の繊細な指先の震えや表情の移ろいを肌で感じることができます。太棹三味線のズシリと胸に響く生演奏は、重低音好きの若者にも強く刺さる迫力です。終演後には人形遣いと直接触れ合える体験コーナーもあり、伝統の奥深さを存分に楽しめます。",
-          stars: { area: "★★★", budget: "★★★", date: "★★☆", who: "★★★" },
-          ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
-          link: "https://www.city.amagasaki.hyogo.jp/manabu/art/1018501/1018506.html",
-          venue: "尼崎市 近松記念館",
-          mapEmbed: "https://maps.google.com/maps?q=%E8%BF%91%E6%9D%BE%E8%A8%98%E5%BF%B5%E9%A4%A8&z=15&output=embed"
-        },
-        {
-          id: "bunraku-3",
-          name: "東京公演 シアター1010特別公演",
-          desc: "駅直結の最新劇場で楽しむ三人遣いの神業ステージ。愛憎劇や人間の葛藤を驚くほど情熱的かつリアルに描き出し、現代のサスペンスドラマ以上に心を揺さぶられます。初めての方でもあらすじが手にとるようにわかる無料プログラムの配布やイヤホンガイドが充実。平日夜や土日にも上演され、仕事帰りや休日に1人でふらりと贅沢な非日常を味わうのにぴったりです。",
-          stars: { area: "★☆☆", budget: "★★☆", date: "★★★", who: "★★★" },
-          ratings: { area: "kanto", budget: "standard", date: "weekday", who: "alone" },
-          link: "https://www.t-1010.jp/",
-          venue: "シアター1010（北千住駅直結）",
-          mapEmbed: "https://maps.google.com/maps?q=%E3%82%B7%E3%82%A2%E3%82%BF%E3%83%BC1010&z=15&output=embed"
-        }
-      ],
-      noh: [
-        {
-          id: "noh-1",
-          name: "大槻能楽堂 能楽へ行こう特別公演",
-          desc: "大阪・谷町四丁目に佇む歴史ある能舞台で開催される、初心者歓迎の特別鑑賞シリーズです。鬼や怨霊が登場するダイナミックな人気曲を取り上げ、開演前にはわかりやすい事前レクチャーを実施。研ぎ澄まされた静寂のなか、笛の澄んだ音と鼓の響きが会場全体を神秘的な空間へと変貌させます。敷居の高さを感じさせないアットホームな雰囲気で、1人でも気軽に本物の幽玄美に浸れます。",
-          stars: { area: "★★★", budget: "★★★", date: "★★★", who: "★★★" },
-          ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
-          link: "http://www.noh-otsuki.com/",
-          venue: "大槻能楽堂（大阪・谷町四丁目）",
-          mapEmbed: "https://maps.google.com/maps?q=%E5%A4%A7%E6%A7%BB%E8%83%BD%E6%A5%BD%E5%A0%82&z=15&output=embed"
-        },
-        {
-          id: "noh-2",
-          name: "国立能楽堂 初心者普及公演",
-          desc: "千駄ヶ谷の緑豊かな庭園に囲まれた国立能楽堂で、世界最古の舞台芸術の真髄に触れる入門プログラムです。全席に座席パーソナル字幕システムが設置されており、セリフや舞いの意味をリアルタイムで追うことができます。角度によって泣き顔にも笑い顔にも見える能面の不思議な美しさに誰もが息を呑むはず。二千円台〜のお手軽な価格設定で、休日のひとり鑑賞に絶大な支持を得ています。",
-          stars: { area: "★☆☆", budget: "★★★", date: "★★★", who: "★★★" },
-          ratings: { area: "kanto", budget: "cheap", date: "weekend", who: "friends" },
-          link: "https://www.ntj.jac.go.jp/noh.html",
-          venue: "国立能楽堂（千駄ヶ谷）",
-          mapEmbed: "https://maps.google.com/maps?q=%E5%9B%BD%E7%AB%8B%E8%83%BD%E6%A5%BD%E5%A0%82&z=15&output=embed"
-        },
-        {
-          id: "noh-3",
-          name: "名古屋能楽堂 特別企画鑑賞会",
-          desc: "日本最大規模を誇る壮大な檜舞台で、六百五十年の伝統を体感できる特別公演です。ダークファンタジーの深淵を覗くような怨霊の舞いや、妖艶な神仏の降臨シーンを豪華な装束とともに堪能できます。館内には能面や装束の展示室も併設されており、観劇前後にじっくりと伝統文化の世界に触れることが可能。名古屋城正門前の落ち着いたロケーションで、心を研ぎ澄ます静かな時間を過ごせます。",
-          stars: { area: "★★☆", budget: "★★☆", date: "★★☆", who: "★★★" },
-          ratings: { area: "tokai", budget: "standard", date: "month", who: "alone" },
-          link: "https://www.bunka-hinkaku.or.jp/",
-          venue: "名古屋能楽堂（名古屋城正門前）",
-          mapEmbed: "https://maps.google.com/maps?q=%E5%90%8D%E5%8F%A4%E5%B1%8B%E8%83%BD%E6%A5%BD%E5%A0%82&z=15&output=embed"
-        }
-      ],
-      kabuki: [
-        {
-          id: "kabuki-1",
-          name: "京都南座 幕見席・お試し観劇",
-          desc: "歌舞伎発祥の地・京都四条河原町の南座で、好きな幕だけを千円台〜で気軽に見られる夢のようなチケットです。歴史ある登録有形文化財の劇場に足を踏み入れれば、江戸の熱気がそのまま蘇ったようなワクワク感に包まれます。迫真の『見得』やド派手な大立ち回り、豪華絢爛な衣装の美しさを短時間で贅沢に満喫。祇園観光の合間に1人でサクッと観劇する若者にも絶大な人気を誇ります。",
-          stars: { area: "★★★", budget: "★★★", date: "★★★", who: "★★★" },
-          ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
-          link: "https://www.kabuki-bito.jp/theaters/minamiza/",
-          venue: "南座（京都・祇園四条）",
-          mapEmbed: "https://maps.google.com/maps?q=%E5%8D%97%E5%BA%A7&z=15&output=embed"
-        },
-        {
-          id: "kabuki-2",
-          name: "歌舞伎座 一幕見席（幕見席）",
-          desc: "東銀座駅直結の最高峰・歌舞伎座で、当日ふらりと好きな演目だけを千円〜二千円程度で鑑賞できる超定番プラン。名優たちの重厚な演技から、宙乗りや大仕掛けの早変わりまで、日本のエンターテインメントの原点を目の前で楽しめます。イヤホンガイドの解説を聞きながら見れば、初めての方でも笑いあり涙ありのストーリーに夢中になれます。銀座の洗練された街並みの中で気軽に楽しめる最高の体験です。",
-          stars: { area: "★☆☆", budget: "★★★", date: "★★★", who: "★★★" },
-          ratings: { area: "kanto", budget: "cheap", date: "month", who: "alone" },
-          link: "https://www.kabuki-bito.jp/theaters/kabukiza/",
-          venue: "歌舞伎座（東銀座駅直結）",
-          mapEmbed: "https://maps.google.com/maps?q=%E6%AD%8C%E8%88%9E%E4%BC%8E%E5%BA%A7&z=15&output=embed"
-        },
-        {
-          id: "kabuki-3",
-          name: "浅草公会堂 新春浅草歌舞伎",
-          desc: "若手花形俳優たちが熱い情熱をぶつけ合う、若者・初心者人気ナンバーワンの登竜門的公演です。客席と舞台の距離が近く、花道を疾走する迫力の演技にお客さんの一体感ある歓声が飛び交います。開演前には俳優自身による見どころ解説コーナーもあり、歌舞伎のルールが楽しく学べる工夫が満載。下町浅草のグルメや観光と合わせて、エネルギッシュな一日を思いきり楽しめます。",
-          stars: { area: "★☆☆", budget: "★★☆", date: "★★★", who: "★★☆" },
-          ratings: { area: "kanto", budget: "standard", date: "weekend", who: "friends" },
-          link: "https://www.asakusa-kabuki.jp/",
-          venue: "浅草公会堂（浅草駅徒歩5分）",
-          mapEmbed: "https://maps.google.com/maps?q=%E6%B5%85%E8%8D%89%E5%85%AC%E4%BC%9A%E5%A0%82&z=15&output=embed"
-        }
-      ]
-    };
-
-    let currentGenre = "bunraku";
-    let currentCardIndex = 0;
-    let currentList = [];
-    const likedSet = new Set();
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      const genreParam = params.get('genre');
-      if (genreParam && performancesData[genreParam]) {
-        currentGenre = genreParam;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>おすすめ公演 - 日本三大芸能（能・文楽・歌舞伎）</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-japanese: #d8cdba;
+        --bg-card: #ece5d8;
+        --bg-card-border: #3b342d;
+        --text-main: #2b251f;
+        --text-sub: #524940;
+        --gold-btn: #d7a844;
+        --gold-btn-hover: #e4b64e;
+        --gold-btn-active: #c29532;
+        --gold-btn-text: #221b10;
+        --green-accent: #196a39;
+        --orange-accent: #d14725;
+        --star-color: #d99a18;
+        --filter-border: #4a4035;
       }
-      switchGenre(currentGenre);
-    });
 
-    function switchGenre(genre) {
-      currentGenre = genre;
-      currentCardIndex = 0;
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+        font-family: "Yuji Syuku", serif !important;
+        font-weight: 400;
+        font-style: normal;
+      }
 
-      document.querySelectorAll('.preview-btn').forEach(b => b.classList.remove('active'));
-      const activeBtn = document.getElementById(`btn-genre-${genre}`);
-      if (activeBtn) activeBtn.classList.add('active');
+      /* 水色のアウトラインやハイライトを完全排除 */
+      *:focus,
+      *:focus-visible {
+        outline: none !important;
+        box-shadow: none !important;
+      }
 
-      const genreNames = { noh: "能楽", bunraku: "人形浄瑠璃", kabuki: "歌舞伎" };
-      document.getElementById('genreTag').textContent = genreNames[genre];
+      body {
+        background-color: #1a1a1c;
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 16px 12px;
+      }
 
-      applyFilters();
-    }
+      /* プレビュー用ツールバー */
+      .preview-bar {
+        width: 100%;
+        max-width: 420px;
+        margin-bottom: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        padding: 10px 14px;
+        border-radius: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+        color: #e5e5e5;
+        font-size: 13.5px;
+      }
 
-    function applyFilters() {
-      const areaVal = document.getElementById('selArea').value;
-      const budgetVal = document.getElementById('selBudget').value;
-      const dateVal = document.getElementById('selDate').value;
-      const whoVal = document.getElementById('selWho').value;
+      .preview-label {
+        font-weight: 700;
+        color: #ffd27d;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
 
-      const master = performancesData[currentGenre] || [];
-      
-      const scored = master.map(item => {
-        let score = 0;
-        let matchStars = { area: "★☆☆", budget: "★☆☆", date: "★☆☆", who: "★☆☆" };
+      .preview-buttons {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
 
-        if (areaVal === item.ratings.area) { score += 4; matchStars.area = "★★★"; }
-        else if (areaVal === 'all') { score += 2; matchStars.area = "★★☆"; }
+      .preview-btn {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s ease;
+      }
 
-        if (budgetVal === item.ratings.budget) { score += 4; matchStars.budget = "★★★"; }
-        else if (budgetVal === 'all') { score += 2; matchStars.budget = "★★☆"; }
+      .preview-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-1px);
+      }
 
-        if (dateVal === item.ratings.date) { score += 4; matchStars.date = "★★★"; }
-        else if (dateVal === 'all') { score += 2; matchStars.date = "★★☆"; }
+      .preview-btn.active {
+        background: #d7a844;
+        color: #201a11;
+        font-weight: 700;
+        border-color: #ffd57a;
+      }
 
-        if (whoVal === item.ratings.who) { score += 4; matchStars.who = "★★★"; }
-        else if (whoVal === 'all') { score += 2; matchStars.who = "★★☆"; }
+      /* 端末外枠コンテナ（iPhone 16比率） */
+      .device-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        height: 844px;
+        max-height: calc(100vh - 70px);
+        background: #111;
+        border-radius: 52px;
+        padding: 12px;
+        box-shadow:
+          0 25px 60px -15px rgba(0, 0, 0, 0.7),
+          0 0 0 1px rgba(255, 255, 255, 0.15),
+          inset 0 0 0 2px #333;
+        display: flex;
+        flex-direction: column;
+      }
 
-        return { ...item, score, dynamicStars: matchStars };
+      .device-notch {
+        position: absolute;
+        top: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 110px;
+        height: 28px;
+        background: #000;
+        border-radius: 20px;
+        z-index: 100;
+        pointer-events: none;
+      }
+
+      /* 画面本体（iPhone 16 - 4） */
+      .app-screen {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: var(--bg-japanese);
+        background-image:
+          radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+          radial-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+        background-size: 20px 20px;
+        border-radius: 42px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* ヘッダー */
+      .screen-header {
+        padding: 42px 20px 8px 20px;
+        background: #d1c6b4;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        z-index: 20;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .back-btn {
+        background: transparent;
+        border: none;
+        font-size: 15px;
+        font-weight: 700;
+        color: #3b342d;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: transform 0.15s ease;
+      }
+
+      .back-btn:hover {
+        transform: translateX(-2px);
+      }
+
+      .header-title-text {
+        font-size: 17px;
+        font-weight: 700;
+        color: #2b251f;
+      }
+
+      .header-genre-tag {
+        background: #196a39;
+        color: #fff;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-weight: 700;
+      }
+
+      /* 画面コンテンツエリア */
+      .screen-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 12px 14px 14px 14px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* 「おすすめ公演」大見出し */
+      .page-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1a1510;
+        margin-bottom: 8px;
+        letter-spacing: 0.03em;
+      }
+
+      /* ======================================= */
+      /* 上質で洗練された和風2行条件選択テーブル */
+      /* ======================================= */
+      .filter-table-card {
+        width: 100%;
+        background: #ece4d6;
+        border: 1.5px solid var(--filter-border);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        overflow: hidden;
+        box-shadow:
+          0 2px 6px rgba(0, 0, 0, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      }
+
+      .filter-table-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        text-align: center;
+      }
+
+      /* 1行目：題名ラベル（地域・予算・日程・誰と） */
+      .filter-header-row {
+        background: #ded4c3;
+        border-bottom: 1.2px solid var(--filter-border);
+        font-size: 13px;
+        font-weight: 700;
+        color: #4a3e30;
+        padding: 5px 0;
+        letter-spacing: 0.05em;
+      }
+
+      /* 2行目：選択肢プルダウン */
+      .filter-select-row {
+        background: #f4ede2;
+      }
+
+      .filter-col {
+        border-right: 1.2px solid var(--filter-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        position: relative;
+      }
+
+      .filter-col:last-child {
+        border-right: none;
+      }
+
+      /* プルダウンのスタイル（水色・デフォルト枠線の完全排除） */
+      .filter-dropdown {
+        width: 100%;
+        padding: 7px 2px;
+        background: transparent;
+        border: none;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1f1a14;
+        text-align: center;
+        text-align-last: center;
+        cursor: pointer;
+        outline: none !important;
+        box-shadow: none !important;
+        appearance: none;
+        -webkit-appearance: none;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .filter-dropdown:hover {
+        background: rgba(215, 168, 68, 0.15);
+        color: #d14725;
+      }
+
+      .filter-dropdown option {
+        background: #f4ede2;
+        color: #2b251f;
+        font-weight: 700;
+        padding: 6px;
+      }
+
+      /* カードスタック領域 */
+      .card-stack-container {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2px;
+        perspective: 1000px;
+      }
+
+      /* 重なり合うカード */
+      .stack-card {
+        position: absolute;
+        top: 0;
+        left: 18px; /* 左右の余白を均等にして中央配置 */
+        width: calc(100% - 36px);
+        height: 100%;
+        background: var(--bg-card);
+        border: 1.8px solid var(--bg-card-border);
+        border-radius: 20px;
+        padding: 13px 14px 11px 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+        transition: all 0.35s cubic-bezier(0.2, 0.8, 0.25, 1);
+        user-select: none;
+      }
+
+      /* 1枚目（最前面） */
+      .stack-card.card-0 {
+        z-index: 10;
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* 2枚目 */
+      .stack-card.card-1 {
+        z-index: 8;
+        transform: translateX(8px) translateY(4px) scale(0.98);
+        opacity: 0.95;
+        pointer-events: none;
+      }
+
+      /* 3枚目 */
+      .stack-card.card-2 {
+        z-index: 6;
+        transform: translateX(16px) translateY(8px) scale(0.96);
+        opacity: 0.85;
+        pointer-events: none;
+      }
+
+      .stack-card.card-hidden {
+        z-index: 4;
+        transform: translateX(24px) translateY(12px) scale(0.94);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* 次へめくるアニメーション（左へ抜ける） */
+      .stack-card.card-flipping-next {
+        transform: translateX(-120%) rotate(-8deg);
+        opacity: 0;
+        transition:
+          transform 0.38s ease-out,
+          opacity 0.32s ease-out;
+      }
+
+      /* 前へ戻るアニメーション（左から戻ってくる） */
+      .stack-card.card-flipping-prev {
+        transform: translateX(-120%) rotate(-8deg);
+        opacity: 0;
+      }
+
+      /* 順位表示（第一位、第二位など） */
+      .rank-tag-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2px;
+      }
+
+      .rank-badge {
+        display: inline-block;
+        background: #2b251f;
+        color: #ffd88a;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 5px;
+        letter-spacing: 0.05em;
+      }
+
+      .card-counter {
+        font-size: 12px;
+        font-weight: 700;
+        color: #7a6e60;
+        background: rgba(0, 0, 0, 0.05);
+        padding: 1px 7px;
+        border-radius: 8px;
+      }
+
+      /* 公演名（大きく、朱色） */
+      .perf-title {
+        font-size: 23px;
+        font-weight: 700;
+        color: var(--orange-accent);
+        line-height: 1.28;
+        margin-bottom: 5px;
+        letter-spacing: 0.02em;
+      }
+
+      /* 条件一致度（星の数）の表示枠（地域に変更） */
+      .ratings-box {
+        background: rgba(0, 0, 0, 0.035);
+        border: 1px solid rgba(0, 0, 0, 0.07);
+        border-radius: 8px;
+        padding: 5px 10px;
+        margin-bottom: 7px;
+      }
+
+      .ratings-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 14px;
+        row-gap: 3px;
+      }
+
+      .rating-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13.5px;
+        color: #2b251f;
+        font-weight: 700;
+      }
+
+      .rating-label {
+        letter-spacing: 0.08em;
+      }
+
+      .rating-stars {
+        color: var(--star-color);
+        font-size: 14.5px;
+        letter-spacing: 1px;
+      }
+
+      /* 4行の説明文（文字サイズを大きく・読みやすく） */
+      .perf-desc-4lines {
+        font-size: 14px; /* 大きく調整 */
+        line-height: 1.62;
+        color: #332a21;
+        text-align: justify;
+        margin-bottom: 5px;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      /* ホームページへリンク（実リンク・新規タブ） */
+      .perf-hp-link {
+        display: inline-block;
+        font-size: 13.5px;
+        color: #2b251f;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        font-weight: 700;
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition:
+          color 0.15s ease,
+          transform 0.15s ease;
+      }
+
+      .perf-hp-link:hover {
+        color: var(--green-accent);
+        transform: translateX(2px);
+      }
+
+      /* Google Map 枠（目的地ピンが中央に表示） */
+      .map-frame-box {
+        width: 100%;
+        height: 125px; /* 全体の縦幅に合わせて最適化 */
+        border: 1.5px solid #4a4237;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #ddd4c5;
+        position: relative;
+        margin-bottom: 7px;
+      }
+
+      .map-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+      }
+
+      .map-pin-tag {
+        position: absolute;
+        bottom: 4px;
+        left: 6px;
+        background: rgba(255, 255, 255, 0.94);
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        color: #2b251f;
+        pointer-events: none;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+
+      /* カード下部アクション */
+      .card-bottom-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-top: 2px;
+      }
+
+      .buy-ticket-btn {
+        flex: 1;
+        background-color: var(--gold-btn);
+        color: var(--gold-btn-text);
+        border: 1.5px solid #bf9233;
+        border-radius: 10px;
+        padding: 10px 10px;
+        font-size: 19px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow:
+          0 3px 8px rgba(0, 0, 0, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        text-align: center;
+        letter-spacing: 0.08em;
+      }
+
+      .buy-ticket-btn:hover {
+        background-color: var(--gold-btn-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
+      }
+
+      .buy-ticket-btn:active {
+        transform: translateY(1px);
+        background-color: var(--gold-btn-active);
+      }
+
+      /* 緑の丸いハートボタン */
+      .heart-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--green-accent);
+        border: none;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        cursor: pointer;
+        box-shadow: 0 3px 8px rgba(25, 106, 57, 0.35);
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .heart-btn:hover {
+        transform: scale(1.08);
+        background: #1e7d44;
+      }
+
+      .heart-btn:active {
+        transform: scale(0.92);
+      }
+
+      .heart-btn.liked {
+        background: #d14725;
+        box-shadow: 0 3px 8px rgba(209, 71, 37, 0.4);
+      }
+
+      /* ======================================= */
+      /* 左右のめくり・戻るナビゲーション（常時アニメなし） */
+      /* ======================================= */
+      .card-nav-trigger {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 25;
+        transition: opacity 0.2s ease;
+      }
+
+      .card-nav-left {
+        left: -4px;
+      }
+
+      .card-nav-right {
+        right: -4px;
+      }
+
+      /* 常時モーションなし、落ち着いた和風のピルボタン */
+      .card-nav-pill {
+        background: rgba(43, 37, 31, 0.85);
+        color: #ffd88a;
+        width: 22px;
+        height: 48px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 216, 138, 0.35);
+        transition:
+          transform 0.15s ease,
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .card-nav-trigger:hover .card-nav-pill {
+        background: #d14725;
+        color: #fff;
+        transform: scale(1.08);
+      }
+
+      .card-nav-trigger.disabled {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* トースト通知 */
+      .toast-msg {
+        position: absolute;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: rgba(28, 24, 20, 0.95);
+        color: #ffd88a;
+        padding: 10px 18px;
+        border-radius: 20px;
+        font-size: 13.5px;
+        font-weight: 700;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.25s ease;
+        z-index: 120;
+        white-space: nowrap;
+        border: 1px solid rgba(255, 216, 138, 0.3);
+      }
+
+      .toast-msg.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 外部プレビュー・デバッグツールバー -->
+    <div class="preview-bar">
+      <div class="preview-label">
+        <span>🎭 芸能切り替え:</span>
+      </div>
+      <div class="preview-buttons">
+        <button class="preview-btn active" id="btn-genre-bunraku" onclick="switchGenre('bunraku')">
+          人形浄瑠璃
+        </button>
+        <button class="preview-btn" id="btn-genre-noh" onclick="switchGenre('noh')">能楽</button>
+        <button class="preview-btn" id="btn-genre-kabuki" onclick="switchGenre('kabuki')">
+          歌舞伎
+        </button>
+      </div>
+    </div>
+
+    <!-- iPhone 16 - 4 端末モックアップ -->
+    <div class="device-wrapper">
+      <div class="device-notch"></div>
+
+      <div class="app-screen">
+        <!-- ヘッダー -->
+        <header class="screen-header">
+          <div class="header-left">
+            <button class="back-btn" onclick="goBack()" title="診断結果に戻る">
+              <span>◀</span>
+              <span>戻る</span>
+            </button>
+          </div>
+          <span class="header-title-text" id="headerTitle">ヘッダー</span>
+          <span class="header-genre-tag" id="genreTag">人形浄瑠璃</span>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="screen-content">
+          <!-- 大見出し -->
+          <h2 class="page-title">おすすめ公演</h2>
+
+          <!-- 洗練された和風2行テーブル（1行目題名、2行目選択肢、水色なし） -->
+          <div class="filter-table-card">
+            <!-- 1行目：題名（地域・予算・日程・誰と） -->
+            <div class="filter-table-row filter-header-row">
+              <div class="filter-col">地域</div>
+              <div class="filter-col">予算</div>
+              <div class="filter-col">日程</div>
+              <div class="filter-col">誰と</div>
+            </div>
+            <!-- 2行目：選択肢（初期設定：関西・お手軽・一か月以内・1人で） -->
+            <div class="filter-table-row filter-select-row">
+              <!-- 地域（エリアから地域に変更） -->
+              <div class="filter-col">
+                <select class="filter-dropdown" id="selArea" onchange="applyFilters()">
+                  <option value="kansai" selected>関西</option>
+                  <option value="kanto">関東</option>
+                  <option value="tokai">東海</option>
+                  <option value="other">その他</option>
+                </select>
+              </div>
+              <!-- 予算 -->
+              <div class="filter-col">
+                <select class="filter-dropdown" id="selBudget" onchange="applyFilters()">
+                  <option value="cheap" selected>お手軽</option>
+                  <option value="standard">標準</option>
+                  <option value="rich">しっかり</option>
+                </select>
+              </div>
+              <!-- 日程 -->
+              <div class="filter-col">
+                <select class="filter-dropdown" id="selDate" onchange="applyFilters()">
+                  <option value="month" selected>一か月以内</option>
+                  <option value="next">来月以降</option>
+                  <option value="weekend">土日のみ</option>
+                  <option value="weekday">平日夜</option>
+                </select>
+              </div>
+              <!-- 誰と -->
+              <div class="filter-col">
+                <select class="filter-dropdown" id="selWho" onchange="applyFilters()">
+                  <option value="alone" selected>1人で</option>
+                  <option value="friends">友達と</option>
+                  <option value="family">家族と</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- スタックカード表示領域（中央配置） -->
+          <div class="card-stack-container" id="cardStackContainer">
+            <!-- JSで動的にスタックカードを生成 -->
+          </div>
+
+          <!-- 左側の戻るクリック領域（二位以降のときに表示、常時アニメなし） -->
+          <div
+            class="card-nav-trigger card-nav-left disabled"
+            id="prevCardTrigger"
+            onclick="flipPrevCard()"
+            title="前の公演カードに戻る"
+          >
+            <div class="card-nav-pill">
+              <span>❮</span>
+            </div>
+          </div>
+
+          <!-- 右側のめくりクリック領域（常時アニメなし） -->
+          <div
+            class="card-nav-trigger card-nav-right"
+            id="nextCardTrigger"
+            onclick="flipNextCard()"
+            title="次の公演カードをめくる"
+          >
+            <div class="card-nav-pill">
+              <span>❯</span>
+            </div>
+          </div>
+        </main>
+
+        <!-- トースト通知 -->
+        <div class="toast-msg" id="toastMsg"></div>
+      </div>
+    </div>
+
+    <script>
+      const rankNames = ["第一位", "第二位", "第三位", "第四位"];
+
+      // 公演マスターデータ（地域表記、4行詳細説明、Google Mapsピン、本物の公式HPリンク）
+      const performancesData = {
+        bunraku: [
+          {
+            id: "bunraku-1",
+            name: "国立文楽劇場 初心者鑑賞教室",
+            desc: "人形浄瑠璃の聖地・大阪日本橋で開催される、若者・初心者のための超人気入門公演です。太夫の迫真の語り分けや三人の人形遣いの息の合った神ワザを、親切な生解説付きで間近に体験できます。近松門左衛門の名作『曾根崎心中』のクライマックスは、涙なしには見られない感動が待っています。字幕表示や音声ガイドも完備されており、予備知識ゼロの1人観劇でも安心して世界観に深く没入できます。",
+            stars: { area: "★★★", budget: "★★★", date: "★★★", who: "★★★" },
+            ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
+            link: "https://www.ntj.jac.go.jp/bunraku.html",
+            venue: "国立文楽劇場（大阪・日本橋）",
+            mapEmbed:
+              "https://maps.google.com/maps?q=%E5%9B%BD%E7%AB%8B%E6%96%87%E6%A5%BD%E5%8A%87%E5%A0%B4&z=15&output=embed",
+          },
+          {
+            id: "bunraku-2",
+            name: "近松記念館 伝統人形浄瑠璃公演",
+            desc: "近松門左衛門ゆかりの寺社が佇む歴史の街で開催される、地元密着の親しみやすい文楽公演です。客席と舞台の距離が驚くほど近く、人形の繊細な指先の震えや表情の移ろいを肌で感じることができます。太棹三味線のズシリと胸に響く生演奏は、重低音好きの若者にも強く刺さる迫力です。終演後には人形遣いと直接触れ合える体験コーナーもあり、伝統の奥深さを存分に楽しめます。",
+            stars: { area: "★★★", budget: "★★★", date: "★★☆", who: "★★★" },
+            ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
+            link: "https://www.city.amagasaki.hyogo.jp/manabu/art/1018501/1018506.html",
+            venue: "尼崎市 近松記念館",
+            mapEmbed:
+              "https://maps.google.com/maps?q=%E8%BF%91%E6%9D%BE%E8%A8%98%E5%BF%B5%E9%A4%A8&z=15&output=embed",
+          },
+          {
+            id: "bunraku-3",
+            name: "東京公演 シアター1010特別公演",
+            desc: "駅直結の最新劇場で楽しむ三人遣いの神業ステージ。愛憎劇や人間の葛藤を驚くほど情熱的かつリアルに描き出し、現代のサスペンスドラマ以上に心を揺さぶられます。初めての方でもあらすじが手にとるようにわかる無料プログラムの配布やイヤホンガイドが充実。平日夜や土日にも上演され、仕事帰りや休日に1人でふらりと贅沢な非日常を味わうのにぴったりです。",
+            stars: { area: "★☆☆", budget: "★★☆", date: "★★★", who: "★★★" },
+            ratings: { area: "kanto", budget: "standard", date: "weekday", who: "alone" },
+            link: "https://www.t-1010.jp/",
+            venue: "シアター1010（北千住駅直結）",
+            mapEmbed:
+              "https://maps.google.com/maps?q=%E3%82%B7%E3%82%A2%E3%82%BF%E3%83%BC1010&z=15&output=embed",
+          },
+        ],
+        noh: [
+          {
+            id: "noh-1",
+            name: "大槻能楽堂 能楽へ行こう特別公演",
+            desc: "大阪・谷町四丁目に佇む歴史ある能舞台で開催される、初心者歓迎の特別鑑賞シリーズです。鬼や怨霊が登場するダイナミックな人気曲を取り上げ、開演前にはわかりやすい事前レクチャーを実施。研ぎ澄まされた静寂のなか、笛の澄んだ音と鼓の響きが会場全体を神秘的な空間へと変貌させます。敷居の高さを感じさせないアットホームな雰囲気で、1人でも気軽に本物の幽玄美に浸れます。",
+            stars: { area: "★★★", budget: "★★★", date: "★★★", who: "★★★" },
+            ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
+            link: "http://www.noh-otsuki.com/",
+            venue: "大槻能楽堂（大阪・谷町四丁目）",
+            mapEmbed:
+              "https://maps.google.com/maps?q=%E5%A4%A7%E6%A7%BB%E8%83%BD%E6%A5%BD%E5%A0%82&z=15&output=embed",
+          },
+          {
+            id: "noh-2",
+            name: "国立能楽堂 初心者普及公演",
+            desc: "千駄ヶ谷の緑豊かな庭園に囲まれた国立能楽堂で、世界最古の舞台芸術の真髄に触れる入門プログラムです。全席に座席パーソナル字幕システムが設置されており、セリフや舞いの意味をリアルタイムで追うことができます。角度によって泣き顔にも笑い顔にも見える能面の不思議な美しさに誰もが息を呑むはず。二千円台〜のお手軽な価格設定で、休日のひとり鑑賞に絶大な支持を得ています。",
+            stars: { area: "★☆☆", budget: "★★★", date: "★★★", who: "★★★" },
+            ratings: { area: "kanto", budget: "cheap", date: "weekend", who: "friends" },
+            link: "https://www.ntj.jac.go.jp/noh.html",
+            venue: "国立能楽堂（千駄ヶ谷）",
+            mapEmbed:
+              "https://maps.google.com/maps?q=%E5%9B%BD%E7%AB%8B%E8%83%BD%E6%A5%BD%E5%A0%82&z=15&output=embed",
+          },
+          {
+            id: "noh-3",
+            name: "名古屋能楽堂 特別企画鑑賞会",
+            desc: "日本最大規模を誇る壮大な檜舞台で、六百五十年の伝統を体感できる特別公演です。ダークファンタジーの深淵を覗くような怨霊の舞いや、妖艶な神仏の降臨シーンを豪華な装束とともに堪能できます。館内には能面や装束の展示室も併設されており、観劇前後にじっくりと伝統文化の世界に触れることが可能。名古屋城正門前の落ち着いたロケーションで、心を研ぎ澄ます静かな時間を過ごせます。",
+            stars: { area: "★★☆", budget: "★★☆", date: "★★☆", who: "★★★" },
+            ratings: { area: "tokai", budget: "standard", date: "month", who: "alone" },
+            link: "https://www.bunka-hinkaku.or.jp/",
+            venue: "名古屋能楽堂（名古屋城正門前）",
+            mapEmbed:
+              "https://maps.google.com/maps?q=%E5%90%8D%E5%8F%A4%E5%B1%8B%E8%83%BD%E6%A5%BD%E5%A0%82&z=15&output=embed",
+          },
+        ],
+        kabuki: [
+          {
+            id: "kabuki-1",
+            name: "京都南座 幕見席・お試し観劇",
+            desc: "歌舞伎発祥の地・京都四条河原町の南座で、好きな幕だけを千円台〜で気軽に見られる夢のようなチケットです。歴史ある登録有形文化財の劇場に足を踏み入れれば、江戸の熱気がそのまま蘇ったようなワクワク感に包まれます。迫真の『見得』やド派手な大立ち回り、豪華絢爛な衣装の美しさを短時間で贅沢に満喫。祇園観光の合間に1人でサクッと観劇する若者にも絶大な人気を誇ります。",
+            stars: { area: "★★★", budget: "★★★", date: "★★★", who: "★★★" },
+            ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
+            link: "https://www.kabuki-bito.jp/theaters/minamiza/",
+            venue: "南座（京都・祇園四条）",
+            mapEmbed: "https://maps.google.com/maps?q=%E5%8D%97%E5%BA%A7&z=15&output=embed",
+          },
+          {
+            id: "kabuki-2",
+            name: "歌舞伎座 一幕見席（幕見席）",
+            desc: "東銀座駅直結の最高峰・歌舞伎座で、当日ふらりと好きな演目だけを千円〜二千円程度で鑑賞できる超定番プラン。名優たちの重厚な演技から、宙乗りや大仕掛けの早変わりまで、日本のエンターテインメントの原点を目の前で楽しめます。イヤホンガイドの解説を聞きながら見れば、初めての方でも笑いあり涙ありのストーリーに夢中になれます。銀座の洗練された街並みの中で気軽に楽しめる最高の体験です。",
+            stars: { area: "★☆☆", budget: "★★★", date: "★★★", who: "★★★" },
+            ratings: { area: "kanto", budget: "cheap", date: "month", who: "alone" },
+            link: "https://www.kabuki-bito.jp/theaters/kabukiza/",
+            venue: "歌舞伎座（東銀座駅直結）",
+            mapEmbed:
+              "https://maps.google.com/maps?q=%E6%AD%8C%E8%88%9E%E4%BC%8E%E5%BA%A7&z=15&output=embed",
+          },
+          {
+            id: "kabuki-3",
+            name: "浅草公会堂 新春浅草歌舞伎",
+            desc: "若手花形俳優たちが熱い情熱をぶつけ合う、若者・初心者人気ナンバーワンの登竜門的公演です。客席と舞台の距離が近く、花道を疾走する迫力の演技にお客さんの一体感ある歓声が飛び交います。開演前には俳優自身による見どころ解説コーナーもあり、歌舞伎のルールが楽しく学べる工夫が満載。下町浅草のグルメや観光と合わせて、エネルギッシュな一日を思いきり楽しめます。",
+            stars: { area: "★☆☆", budget: "★★☆", date: "★★★", who: "★★☆" },
+            ratings: { area: "kanto", budget: "standard", date: "weekend", who: "friends" },
+            link: "https://www.asakusa-kabuki.jp/",
+            venue: "浅草公会堂（浅草駅徒歩5分）",
+            mapEmbed:
+              "https://maps.google.com/maps?q=%E6%B5%85%E8%8D%89%E5%85%AC%E4%BC%9A%E5%A0%82&z=15&output=embed",
+          },
+        ],
+      };
+
+      let currentGenre = "bunraku";
+      let currentCardIndex = 0;
+      let currentList = [];
+      const likedSet = new Set();
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        const genreParam = params.get("genre");
+        if (genreParam && performancesData[genreParam]) {
+          currentGenre = genreParam;
+        }
+        switchGenre(currentGenre);
       });
 
-      scored.sort((a, b) => b.score - a.score);
-      currentList = scored;
-      currentCardIndex = 0;
+      function switchGenre(genre) {
+        currentGenre = genre;
+        currentCardIndex = 0;
 
-      renderCardStack();
-      updateNavButtons();
-    }
+        document.querySelectorAll(".preview-btn").forEach((b) => b.classList.remove("active"));
+        const activeBtn = document.getElementById(`btn-genre-${genre}`);
+        if (activeBtn) activeBtn.classList.add("active");
 
-    function renderCardStack() {
-      const container = document.getElementById('cardStackContainer');
-      container.innerHTML = '';
+        const genreNames = { noh: "能楽", bunraku: "人形浄瑠璃", kabuki: "歌舞伎" };
+        document.getElementById("genreTag").textContent = genreNames[genre];
 
-      if (currentList.length === 0) {
-        container.innerHTML = '<div style="padding: 40px; text-align: center; color: #555;">該当する公演が見つかりませんでした。条件を変えてみてください。</div>';
-        return;
+        applyFilters();
       }
 
-      currentList.forEach((perf, idx) => {
-        const card = document.createElement('div');
-        card.className = 'stack-card';
-        card.id = `card-${idx}`;
+      function applyFilters() {
+        const areaVal = document.getElementById("selArea").value;
+        const budgetVal = document.getElementById("selBudget").value;
+        const dateVal = document.getElementById("selDate").value;
+        const whoVal = document.getElementById("selWho").value;
 
-        const relPos = idx - currentCardIndex;
-        if (relPos === 0) {
-          card.classList.add('card-0');
-        } else if (relPos === 1) {
-          card.classList.add('card-1');
-        } else if (relPos === 2) {
-          card.classList.add('card-2');
-        } else {
-          card.classList.add('card-hidden');
+        const master = performancesData[currentGenre] || [];
+
+        const scored = master.map((item) => {
+          let score = 0;
+          let matchStars = { area: "★☆☆", budget: "★☆☆", date: "★☆☆", who: "★☆☆" };
+
+          if (areaVal === item.ratings.area) {
+            score += 4;
+            matchStars.area = "★★★";
+          } else if (areaVal === "all") {
+            score += 2;
+            matchStars.area = "★★☆";
+          }
+
+          if (budgetVal === item.ratings.budget) {
+            score += 4;
+            matchStars.budget = "★★★";
+          } else if (budgetVal === "all") {
+            score += 2;
+            matchStars.budget = "★★☆";
+          }
+
+          if (dateVal === item.ratings.date) {
+            score += 4;
+            matchStars.date = "★★★";
+          } else if (dateVal === "all") {
+            score += 2;
+            matchStars.date = "★★☆";
+          }
+
+          if (whoVal === item.ratings.who) {
+            score += 4;
+            matchStars.who = "★★★";
+          } else if (whoVal === "all") {
+            score += 2;
+            matchStars.who = "★★☆";
+          }
+
+          return { ...item, score, dynamicStars: matchStars };
+        });
+
+        scored.sort((a, b) => b.score - a.score);
+        currentList = scored;
+        currentCardIndex = 0;
+
+        renderCardStack();
+        updateNavButtons();
+      }
+
+      function renderCardStack() {
+        const container = document.getElementById("cardStackContainer");
+        container.innerHTML = "";
+
+        if (currentList.length === 0) {
+          container.innerHTML =
+            '<div style="padding: 40px; text-align: center; color: #555;">該当する公演が見つかりませんでした。条件を変えてみてください。</div>';
+          return;
         }
 
-        const isLiked = likedSet.has(perf.id);
-        const rankText = rankNames[idx] || `第${idx + 1}位`;
-        const stars = perf.dynamicStars || perf.stars;
+        currentList.forEach((perf, idx) => {
+          const card = document.createElement("div");
+          card.className = "stack-card";
+          card.id = `card-${idx}`;
 
-        card.innerHTML = `
+          const relPos = idx - currentCardIndex;
+          if (relPos === 0) {
+            card.classList.add("card-0");
+          } else if (relPos === 1) {
+            card.classList.add("card-1");
+          } else if (relPos === 2) {
+            card.classList.add("card-2");
+          } else {
+            card.classList.add("card-hidden");
+          }
+
+          const isLiked = likedSet.has(perf.id);
+          const rankText = rankNames[idx] || `第${idx + 1}位`;
+          const stars = perf.dynamicStars || perf.stars;
+
+          card.innerHTML = `
           <div>
             <!-- 1. 順位表示（第一位、第二位など） -->
             <div class="rank-tag-wrap">
@@ -1026,104 +1082,104 @@
             <button class="buy-ticket-btn" onclick="buyTicket('${perf.name}', '${perf.link}')">
               チケットを買う
             </button>
-            <button class="heart-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike('${perf.id}')" title="お気に入りに保存">
-              ${isLiked ? '♥' : '♡'}
+            <button class="heart-btn ${isLiked ? "liked" : ""}" onclick="toggleLike('${perf.id}')" title="お気に入りに保存">
+              ${isLiked ? "♥" : "♡"}
             </button>
           </div>
         `;
 
-        container.appendChild(card);
-      });
-    }
-
-    // 左右ナビゲーションボタンの表示・非表示制御
-    // 要件：「二位以降の場合は左でカードを戻せるようにしてください」
-    function updateNavButtons() {
-      const prevBtn = document.getElementById('prevCardTrigger');
-      const nextBtn = document.getElementById('nextCardTrigger');
-
-      // 二位以降（currentCardIndex > 0）なら左戻るボタンを表示
-      if (currentCardIndex > 0) {
-        prevBtn.classList.remove('disabled');
-      } else {
-        prevBtn.classList.add('disabled');
+          container.appendChild(card);
+        });
       }
 
-      // 次へ進めるカードがある場合（またはループ）
-      if (currentList.length > 1) {
-        nextBtn.classList.remove('disabled');
-      } else {
-        nextBtn.classList.add('disabled');
+      // 左右ナビゲーションボタンの表示・非表示制御
+      // 要件：「二位以降の場合は左でカードを戻せるようにしてください」
+      function updateNavButtons() {
+        const prevBtn = document.getElementById("prevCardTrigger");
+        const nextBtn = document.getElementById("nextCardTrigger");
+
+        // 二位以降（currentCardIndex > 0）なら左戻るボタンを表示
+        if (currentCardIndex > 0) {
+          prevBtn.classList.remove("disabled");
+        } else {
+          prevBtn.classList.add("disabled");
+        }
+
+        // 次へ進めるカードがある場合（またはループ）
+        if (currentList.length > 1) {
+          nextBtn.classList.remove("disabled");
+        } else {
+          nextBtn.classList.add("disabled");
+        }
       }
-    }
 
-    // 次のカードへめくる
-    function flipNextCard() {
-      if (currentList.length <= 1) return;
+      // 次のカードへめくる
+      function flipNextCard() {
+        if (currentList.length <= 1) return;
 
-      const topCard = document.getElementById(`card-${currentCardIndex}`);
-      if (!topCard) return;
+        const topCard = document.getElementById(`card-${currentCardIndex}`);
+        if (!topCard) return;
 
-      topCard.classList.add('card-flipping-next');
+        topCard.classList.add("card-flipping-next");
 
-      setTimeout(() => {
-        currentCardIndex = (currentCardIndex + 1) % currentList.length;
+        setTimeout(() => {
+          currentCardIndex = (currentCardIndex + 1) % currentList.length;
+          renderCardStack();
+          updateNavButtons();
+        }, 280);
+      }
+
+      // 前のカードへ戻る
+      function flipPrevCard() {
+        if (currentCardIndex <= 0) return;
+
+        currentCardIndex--;
         renderCardStack();
         updateNavButtons();
-      }, 280);
-    }
 
-    // 前のカードへ戻る
-    function flipPrevCard() {
-      if (currentCardIndex <= 0) return;
-
-      currentCardIndex--;
-      renderCardStack();
-      updateNavButtons();
-
-      const newTop = document.getElementById(`card-${currentCardIndex}`);
-      if (newTop) {
-        newTop.classList.add('card-flipping-prev');
-        // リフロー強制後にアニメーション復帰
-        void newTop.offsetWidth;
-        newTop.classList.remove('card-flipping-prev');
+        const newTop = document.getElementById(`card-${currentCardIndex}`);
+        if (newTop) {
+          newTop.classList.add("card-flipping-prev");
+          // リフロー強制後にアニメーション復帰
+          void newTop.offsetWidth;
+          newTop.classList.remove("card-flipping-prev");
+        }
       }
-    }
 
-    function toggleLike(id) {
-      if (likedSet.has(id)) {
-        likedSet.delete(id);
-        showToast("お気に入りを解除しました");
-      } else {
-        likedSet.add(id);
-        showToast("♥ お気に入りに追加しました");
+      function toggleLike(id) {
+        if (likedSet.has(id)) {
+          likedSet.delete(id);
+          showToast("お気に入りを解除しました");
+        } else {
+          likedSet.add(id);
+          showToast("♥ お気に入りに追加しました");
+        }
+        renderCardStack();
       }
-      renderCardStack();
-    }
 
-    function buyTicket(name, url) {
-      showToast(`🎟️ 「${name}」の公式チケットページを開きます…`);
-      setTimeout(() => {
-        window.open(url, '_blank');
-      }, 500);
-    }
-
-    function goBack() {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = "index.html";
+      function buyTicket(name, url) {
+        showToast(`🎟️ 「${name}」の公式チケットページを開きます…`);
+        setTimeout(() => {
+          window.open(url, "_blank");
+        }, 500);
       }
-    }
 
-    function showToast(msg) {
-      const toast = document.getElementById('toastMsg');
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2200);
-    }
-  </script>
-</body>
+      function goBack() {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = "index.html";
+        }
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById("toastMsg");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 2200);
+      }
+    </script>
+  </body>
 </html>

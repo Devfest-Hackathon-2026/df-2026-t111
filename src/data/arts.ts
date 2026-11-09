@@ -19,8 +19,8 @@ export interface ArtTopic {
 
 /** ミニ体験（② の画面）で使う説明 */
 export interface ArtChallenge {
-  /** どのチャレンジか（mie：見得チャレンジ、nanori：名乗りチャレンジ） */
-  type: "mie" | "nanori";
+  /** どのチャレンジか（mie：見得チャレンジ、nanori：名乗りチャレンジ、ningyoJoruri：人形浄瑠璃チャレンジ） */
+  type: "mie" | "nanori" | "ningyoJoruri";
   /** チャレンジ名 */
   title: string;
   /** 遊び方の説明 */
@@ -266,6 +266,12 @@ export const arts: Record<PerformingArt, ArtContent> = {
       "声の演技（声優やナレーション）に興味がある",
       "音楽とお話が一緒になったものが好き",
     ],
+    challenge: {
+      type: "ningyoJoruri",
+      title: "ひとり三人遣いチャレンジ",
+      description:
+        "文楽の人形は3人で息を合わせて動かします。合図に合わせてタイミングよくボタンを押して、人形に命を吹き込もう！",
+    },
     video: {
       // [V3] 字幕がないため、動画の中身はまだ確認できていない
       youtubeId: "29ltyTSmN6c",

@@ -11,7 +11,7 @@ export default function Home() {
           日本の伝統芸能
         </h1>
         <p className="text-sm text-[#524940] leading-relaxed mb-8">
-          能・狂言、人形浄瑠璃文楽、歌舞伎。
+          能楽、人形浄瑠璃、歌舞伎。
           <br />
           あなたの感性に合う芸能を診断し、
           <br />
@@ -30,7 +30,7 @@ export default function Home() {
             href="/challenge"
             className="w-full py-3.5 px-6 bg-[#f4eee3] hover:bg-white text-[#2b251f] font-bold text-base rounded-2xl border border-black/10 transition"
           >
-            🎭 ミニ体験（見得・名乗り）へ直行
+            🎭 ミニ体験（歌舞伎・能楽・人形浄瑠璃）へ直行
           </Link>
         </div>
       </div>
