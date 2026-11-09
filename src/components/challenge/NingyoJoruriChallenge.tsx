@@ -20,7 +20,7 @@ export function NingyoJoruriChallenge({
   const [stage, setStage] = useState<Stage>(1);
   const [timeLeft, setTimeLeft] = useState<number>(10);
   const [, setMessages] = useState<string[]>([]);
-  const [scores, setScores] = useState<{ [key in Stage]?: number }>({});
+  const [, setScores] = useState<{ [key in Stage]?: number }>({});
   const [finalScore, setFinalScore] = useState<number>(0);
   const [masterComment, setMasterComment] = useState<string>("");
 
@@ -33,8 +33,15 @@ export function NingyoJoruriChallenge({
 
   const cueIdCounter = useRef(0);
 
-  // プレイ中のアクション記録・判定用
-  const [actionTimestamps, setActionTimestamps] = useState<{
+  // プレイ中のアクション記録・判定用（クロージャ対策のためRefで管理）
+  const actionTimestampsRef = useRef<{
+    ashi: number[];
+    leftHand: number[];
+    head: number[];
+  }>({ ashi: [], leftHand: [], head: [] });
+  const scoresRef = useRef<{ [key in Stage]?: number }>({});
+
+  const [, setActionTimestamps] = useState<{
     ashi: number[];
     leftHand: number[];
     head: number[];
@@ -112,6 +119,8 @@ export function NingyoJoruriChallenge({
 
   const startChallenge = () => {
     initAudio();
+    scoresRef.current = {};
+    setScores({});
     setStage(1);
     setPhase("stageIntro");
     setActiveStep(1);
@@ -131,6 +140,7 @@ export function NingyoJoruriChallenge({
       setPhase("playing");
       setTimeLeft(10);
       setActiveCues({ ashi: [], leftHand: [], head: [] });
+      actionTimestampsRef.current = { ashi: [], leftHand: [], head: [] };
       setActionTimestamps({ ashi: [], leftHand: [], head: [] });
 
       if (stage === 1) {
@@ -167,7 +177,7 @@ export function NingyoJoruriChallenge({
   };
 
   const handleStageEnd = (currentStage: Stage) => {
-    const times = actionTimestamps;
+    const times = actionTimestampsRef.current;
     let stageScore = 70;
 
     if (currentStage === 1) {
@@ -193,7 +203,8 @@ export function NingyoJoruriChallenge({
       }
     }
 
-    const updatedScores = { ...scores, [currentStage]: stageScore };
+    scoresRef.current[currentStage] = stageScore;
+    const updatedScores = { ...scoresRef.current };
     setScores(updatedScores);
 
     if (currentStage < 3) {
@@ -310,6 +321,7 @@ export function NingyoJoruriChallenge({
     if (phase !== "playing") return;
 
     const now = Date.now();
+    actionTimestampsRef.current[part].push(now);
     setActionTimestamps((prev) => ({
       ...prev,
       [part]: [...prev[part], now],
