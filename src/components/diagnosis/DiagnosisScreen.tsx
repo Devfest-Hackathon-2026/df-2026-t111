@@ -119,7 +119,7 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     artRoute: "/arts/nogaku",
     photos: [
       {
-        url: "/images/noh-stage-mask.png",
+        url: "/images/noh-mask.png",
         caption: "一、神秘の能面",
       },
       {
@@ -151,11 +151,11 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
         caption: "一、三人で命を吹き込む精密な人形",
       },
       {
-        url: "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=600&auto=format&fit=crop&q=80",
+        url: "/images/bunraku-yomi.png",
         caption: "二、太夫の語りと三味線の圧倒的熱量",
       },
       {
-        url: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=80",
+        url: "/images/bunraku-stage.png",
         caption: "三、息を呑む情熱的な愛憎劇の舞台",
       },
     ],
@@ -175,15 +175,15 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     artRoute: "/arts/kabuki",
     photos: [
       {
-        url: "https://images.unsplash.com/photo-1576085898323-218337e3e43c?w=600&auto=format&fit=crop&q=80",
+        url: "/images/kabuki-mie.png",
         caption: "一、迫力満点の隈取メイクと見得",
       },
       {
-        url: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600&auto=format&fit=crop&q=80",
+        url: "/images/kabuki-tatimawari.png",
         caption: "二、豪華絢爛な舞台装置と立ち回り",
       },
       {
-        url: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=600&auto=format&fit=crop&q=80",
+        url: "/images/kabuki-ennsyutu.png",
         caption: "三、客席を沸かせるド派手な演出",
       },
     ],
