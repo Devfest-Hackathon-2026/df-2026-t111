@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import "./diagnosis.css";
 
@@ -33,6 +34,7 @@ interface ResultInfo {
   photos: Photo[];
   challengeRoute: string;
   challengeName: string;
+  artRoute: string;
 }
 
 const MASTER_QUESTIONS: Question[] = [
@@ -104,16 +106,17 @@ const MASTER_QUESTIONS: Question[] = [
 const RESULTS_DATA: Record<ArtType, ResultInfo> = {
   noh: {
     firstChar: "能",
-    restChars: "",
-    subtitle: "和風ダークファンタジー",
+    restChars: "楽",
+    subtitle: "幽玄の世界・和風ダークファンタジー",
     description:
-      "能は、幽霊や神仏、怨霊の想いを描く世界最古の現存舞台芸術。独特の能面は角度によって表情を変え、神秘的な没入感をもたらします。",
-    detailsLinkText: "能を詳しく見てみる →",
-    detailTitle: "能（能楽）の魅力",
+      "能楽（能・狂言）は、幽霊や神仏、怨霊の想いを描く世界最古の現存舞台芸術。独特の能面は角度によって表情を変え、神秘的な没入感をもたらします。",
+    detailsLinkText: "能楽を詳しく見てみる →",
+    detailTitle: "能楽の魅力",
     detailText:
       "無駄を極限まで削ぎ落とした美学「幽玄」。ダークファンタジーや怪異譚が好きな人にはたまらない、異世界へと引き込まれるような独特の静寂とトランス体験が待っています。",
     challengeRoute: "/challenge/nanori",
-    challengeName: "狂言名乗りチャレンジ",
+    challengeName: "能楽（名乗り）チャレンジ",
+    artRoute: "/arts/nogaku",
     photos: [
       {
         url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80",
@@ -130,17 +133,18 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     ],
   },
   bunraku: {
-    firstChar: "文",
-    restChars: "楽",
+    firstChar: "人形",
+    restChars: "浄瑠璃",
     subtitle: "神業ミニチュア×人間ドラマ",
     description:
-      "文楽（人形浄瑠璃）は、3人の人形遣いが1体の人形に命を吹き込み、物語を語る太夫と三味線が心を震わせる世界最高峰の人形劇。愛憎劇や人間の葛藤を驚くほどリアルかつ情熱的に描きます。",
-    detailsLinkText: "文楽を詳しく見てみる →",
-    detailTitle: "文楽（人形浄瑠璃）の魅力",
+      "人形浄瑠璃（文楽）は、3人の人形遣いが1体の人形に命を吹き込み、物語を語る太夫と三味線が心を震わせる世界最高峰の人形劇。愛憎劇や人間の葛藤を驚くほどリアルかつ情熱的に描きます。",
+    detailsLinkText: "人形浄瑠璃を詳しく見てみる →",
+    detailTitle: "人形浄瑠璃（文楽）の魅力",
     detailText:
       "3人が息を完全に合わせて操る人形は、指先の動きや息遣い、涙を拭う仕草まで生身の人間以上に人間らしく動きます。物語を語る太夫の迫真の声と、情念をかき鳴らす太棹三味線の響きが一体となって圧倒的なドラマを生み出します。",
-    challengeRoute: "/challenge",
-    challengeName: "ミニ体験選択画面",
+    challengeRoute: "/challenge/ningyo-joruri",
+    challengeName: "人形浄瑠璃（ひとり三人遣い）チャレンジ",
+    artRoute: "/arts/ningyoJoruri",
     photos: [
       {
         url: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop&q=80",
@@ -167,7 +171,8 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     detailText:
       "隈取（くまどり）メイクや大立ち回り、舞台の早変わりなど、日本のエンタメの原点がここに。歌舞伎座には手軽な一幕見席もあり、気軽に鑑賞できます。",
     challengeRoute: "/challenge/mie",
-    challengeName: "見得チャレンジ",
+    challengeName: "歌舞伎（見得）チャレンジ",
+    artRoute: "/arts/kabuki",
     photos: [
       {
         url: "https://images.unsplash.com/photo-1576085898323-218337e3e43c?w=600&auto=format&fit=crop&q=80",
@@ -215,7 +220,7 @@ export function DiagnosisScreen() {
       shuffleArray(MASTER_QUESTIONS).map((q) => ({
         ...q,
         options: shuffleArray(q.options),
-      }))
+      })),
     );
   }, []);
 
@@ -271,7 +276,7 @@ export function DiagnosisScreen() {
       shuffleArray(MASTER_QUESTIONS).map((q) => ({
         ...q,
         options: shuffleArray(q.options),
-      }))
+      })),
     );
     setCurrentIdx(0);
     setAnswers(new Array(7).fill(null));
@@ -297,11 +302,7 @@ export function DiagnosisScreen() {
         {phase === "quiz" && (
           <header className="screen-header">
             <div className="header-actions">
-              <button
-                type="button"
-                className="skip-btn"
-                onClick={() => finishAndCalculate()}
-              >
+              <button type="button" className="skip-btn" onClick={() => finishAndCalculate()}>
                 診断を終える
               </button>
               <button
@@ -326,9 +327,7 @@ export function DiagnosisScreen() {
               } else if (answers[i] !== null) {
                 dotClass = "answered";
               }
-              return (
-                <span key={i} className={`progress-dot ${dotClass}`} />
-              );
+              return <span key={i} className={`progress-dot ${dotClass}`} />;
             })}
           </div>
         )}
@@ -341,12 +340,8 @@ export function DiagnosisScreen() {
           {phase === "quiz" && currentQuestion && (
             <section className="quiz-view">
               <div className="question-section">
-                <div className="question-badge">
-                  第 {currentIdx + 1} 問
-                </div>
-                <h2 className="question-text">
-                  {currentQuestion.text}
-                </h2>
+                <div className="question-badge">第 {currentIdx + 1} 問</div>
+                <h2 className="question-text">{currentQuestion.text}</h2>
               </div>
 
               <div className="options-list">
@@ -396,9 +391,7 @@ export function DiagnosisScreen() {
             <section className="result-view">
               <div className="result-top-area">
                 <div className="result-header-text">あなたは…</div>
-                <div className="result-subtitle-top">
-                  {resultInfo.subtitle}
-                </div>
+                <div className="result-subtitle-top">{resultInfo.subtitle}</div>
 
                 {/* バッジ表示 */}
                 <div className="result-badge-area">
@@ -412,8 +405,8 @@ export function DiagnosisScreen() {
                             resultInfo.restChars.length >= 2
                               ? "50px"
                               : resultInfo.restChars.length === 1
-                              ? "56px"
-                              : "60px",
+                                ? "56px"
+                                : "60px",
                         }}
                       >
                         {resultInfo.firstChar}
@@ -425,8 +418,7 @@ export function DiagnosisScreen() {
                         <span
                           className="badge-char-text"
                           style={{
-                            fontSize:
-                              resultInfo.restChars.length >= 2 ? "48px" : "56px",
+                            fontSize: resultInfo.restChars.length >= 2 ? "48px" : "56px",
                           }}
                         >
                           {resultInfo.restChars}
@@ -446,12 +438,7 @@ export function DiagnosisScreen() {
                     {resultInfo.photos.map((p, idx) => (
                       <div key={idx} className="photo-card">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={p.url}
-                          alt={p.caption}
-                          className="photo-img"
-                          loading="lazy"
-                        />
+                        <img src={p.url} alt={p.caption} className="photo-img" loading="lazy" />
                         <div className="photo-caption">{p.caption}</div>
                       </div>
                     ))}
@@ -471,11 +458,7 @@ export function DiagnosisScreen() {
 
               {/* 画面下部：体験するボタン */}
               <div className="experience-btn-area">
-                <button
-                  type="button"
-                  className="experience-btn"
-                  onClick={handleTriggerExperience}
-                >
+                <button type="button" className="experience-btn" onClick={handleTriggerExperience}>
                   体験する
                 </button>
               </div>
@@ -484,22 +467,12 @@ export function DiagnosisScreen() {
         </main>
 
         {/* トースト通知 */}
-        <div
-          className={`toast-notification ${toastMessage ? "show" : ""}`}
-        >
-          {toastMessage}
-        </div>
+        <div className={`toast-notification ${toastMessage ? "show" : ""}`}>{toastMessage}</div>
 
         {/* モーダル: 詳しく見る */}
         {isModalOpen && (
-          <div
-            className="modal-overlay"
-            onClick={() => setIsModalOpen(false)}
-          >
-            <div
-              className="modal-sheet"
-              onClick={(e) => e.stopPropagation()}
-            >
+          <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+            <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
               <button
                 type="button"
                 className="modal-close-btn"
@@ -509,13 +482,9 @@ export function DiagnosisScreen() {
               </button>
               <h3 className="modal-title">{resultInfo.detailTitle}</h3>
               <div className="modal-content">
-                <p style={{ marginBottom: "12px", fontSize: "15px" }}>
-                  {resultInfo.detailText}
-                </p>
+                <p style={{ marginBottom: "12px", fontSize: "15px" }}>{resultInfo.detailText}</p>
                 <div className="modal-action-card">
-                  <strong style={{ fontSize: "16px" }}>
-                    ✨ はじめての鑑賞のポイント
-                  </strong>
+                  <strong style={{ fontSize: "16px" }}>✨ はじめての鑑賞のポイント</strong>
                   <p
                     style={{
                       marginTop: "6px",
@@ -525,6 +494,14 @@ export function DiagnosisScreen() {
                   >
                     チケットはオンラインで手軽に購入可能。最近はイヤホンガイドの貸出や字幕表示もあり、予備知識がなくても物語に深く浸ることができます。
                   </p>
+                </div>
+                <div style={{ marginTop: "16px" }}>
+                  <Link
+                    href={resultInfo.artRoute}
+                    className="w-full inline-block py-3 px-4 bg-[#d7a844] hover:bg-[#e4b64e] text-[#221b10] font-bold text-center rounded-xl transition text-base"
+                  >
+                    🎭 公演情報・詳細ページを見る →
+                  </Link>
                 </div>
               </div>
             </div>

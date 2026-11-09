@@ -240,9 +240,29 @@ export function ArtDetail({ artId }: { artId: PerformingArt }) {
         </ul>
       </StageSection>
 
-      <div className="mt-9">
+      <div className="mt-9 flex flex-col gap-3">
+        <Link
+          href={
+            artId === "kabuki"
+              ? "/challenge/mie"
+              : artId === "nogaku"
+                ? "/challenge/nanori"
+                : "/challenge/ningyo-joruri"
+          }
+          className="hover:opacity-85 transition"
+        >
+          <ArrowLabel
+            label={
+              artId === "kabuki"
+                ? "歌舞伎（見得チャレンジ）を体験する"
+                : artId === "nogaku"
+                  ? "能楽（名乗りチャレンジ）を体験する"
+                  : "人形浄瑠璃（ひとり三人遣い）を体験する"
+            }
+          />
+        </Link>
         <Link href="/challenge" className="hover:opacity-85 transition">
-          <ArrowLabel label="ミニ体験へ戻る" back />
+          <ArrowLabel label="ミニ体験一覧へ" back />
         </Link>
       </div>
     </StagePage>

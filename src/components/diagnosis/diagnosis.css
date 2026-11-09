@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Yuji+Syuku&display=swap");
 
 .diagnosis-root {
   --bg-japanese: #d8cdba;
@@ -16,7 +16,7 @@
   --badge-yellow: #f4c844;
 
   background-color: var(--bg-japanese);
-  background-image: 
+  background-image:
     radial-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1px),
     radial-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px);
   background-size: 20px 20px;
@@ -34,7 +34,7 @@
   margin: 0;
   padding: 0;
   -webkit-tap-highlight-color: transparent;
-  font-family: 'Yuji Syuku', serif !important;
+  font-family: "Yuji Syuku", serif !important;
   font-weight: 400;
   font-style: normal;
 }
@@ -353,13 +353,13 @@
   user-select: none;
   text-shadow:
     -3px -3px 0 #111,
-     3px -3px 0 #111,
-    -3px  3px 0 #111,
-     3px  3px 0 #111,
-    -4px  0   0 #111,
-     4px  0   0 #111,
-     0   -4px 0 #111,
-     0    4px 0 #111;
+    3px -3px 0 #111,
+    -3px 3px 0 #111,
+    3px 3px 0 #111,
+    -4px 0 0 #111,
+    4px 0 0 #111,
+    0 -4px 0 #111,
+    0 4px 0 #111;
   -webkit-text-stroke: 5px #111;
   paint-order: stroke fill;
   display: flex;
@@ -508,7 +508,7 @@
   border-radius: 24px;
   font-size: 14.5px;
   font-weight: 700;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   opacity: 0;
   pointer-events: none;
   transition: all 0.3s ease;
@@ -586,5 +586,5 @@
   padding: 12px;
   background: var(--bg-card);
   border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
