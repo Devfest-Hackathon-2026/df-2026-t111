@@ -119,7 +119,7 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     artRoute: "/arts/nogaku",
     photos: [
       {
-        url: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80",
+        url: "/images/noh-stage-mask.png",
         caption: "一、神秘の能面",
       },
       {
