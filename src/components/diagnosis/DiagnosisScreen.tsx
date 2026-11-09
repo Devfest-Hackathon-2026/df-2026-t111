@@ -209,7 +209,6 @@ export function DiagnosisScreen() {
   const [answers, setAnswers] = useState<(ArtType | null)[]>(new Array(7).fill(null));
   const [phase, setPhase] = useState<"quiz" | "result">("quiz");
   const [resultType, setResultType] = useState<ArtType>("noh");
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const carouselRef = useRef<HTMLDivElement | null>(null);
@@ -447,13 +446,12 @@ export function DiagnosisScreen() {
 
                 <p className="result-card-text">{resultInfo.description}</p>
 
-                <button
-                  type="button"
+                <Link
+                  href={resultInfo.artRoute}
                   className="result-details-link"
-                  onClick={() => setIsModalOpen(true)}
                 >
                   {resultInfo.detailsLinkText}
-                </button>
+                </Link>
               </div>
 
               {/* 画面下部：体験するボタン */}
@@ -468,45 +466,6 @@ export function DiagnosisScreen() {
 
         {/* トースト通知 */}
         <div className={`toast-notification ${toastMessage ? "show" : ""}`}>{toastMessage}</div>
-
-        {/* モーダル: 詳しく見る */}
-        {isModalOpen && (
-          <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-            <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
-              <button
-                type="button"
-                className="modal-close-btn"
-                onClick={() => setIsModalOpen(false)}
-              >
-                ✕
-              </button>
-              <h3 className="modal-title">{resultInfo.detailTitle}</h3>
-              <div className="modal-content">
-                <p style={{ marginBottom: "12px", fontSize: "15px" }}>{resultInfo.detailText}</p>
-                <div className="modal-action-card">
-                  <strong style={{ fontSize: "16px" }}>✨ はじめての鑑賞のポイント</strong>
-                  <p
-                    style={{
-                      marginTop: "6px",
-                      fontSize: "14px",
-                      color: "#4b443c",
-                    }}
-                  >
-                    チケットはオンラインで手軽に購入可能。最近はイヤホンガイドの貸出や字幕表示もあり、予備知識がなくても物語に深く浸ることができます。
-                  </p>
-                </div>
-                <div style={{ marginTop: "16px" }}>
-                  <Link
-                    href={resultInfo.artRoute}
-                    className="w-full inline-block py-3 px-4 bg-[#d7a844] hover:bg-[#e4b64e] text-[#221b10] font-bold text-center rounded-xl transition text-base"
-                  >
-                    🎭 公演情報・詳細ページを見る →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
