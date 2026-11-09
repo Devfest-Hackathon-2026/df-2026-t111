@@ -21,7 +21,7 @@ export function getGeminiClient(): GoogleGenAI {
  * 使用する Gemini モデル名を取得する
  */
 export function getGeminiModel(): string {
-  return process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  return process.env.GEMINI_MODEL || "gemini-3.8-flash";
 }
 
 /**
