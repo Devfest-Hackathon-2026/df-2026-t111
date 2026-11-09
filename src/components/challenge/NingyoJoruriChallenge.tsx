@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 
 type Phase = "intro" | "stageIntro" | "playing" | "result";
 type Stage = 1 | 2 | 3;
@@ -409,7 +410,7 @@ export function NingyoJoruriChallenge({
         {phase === "intro" && (
           <div className="flex flex-col gap-7">
             <div className="flex items-center">
-              <a
+              <Link
                 href="/challenge"
                 className="inline-flex items-center gap-2 text-[17px] md:text-lg font-light text-black hover:opacity-80 transition"
               >
@@ -422,7 +423,7 @@ export function NingyoJoruriChallenge({
                   <polygon points="14,6.5 7,12 14,17.5" fill="white" />
                 </svg>
                 選択画面へ
-              </a>
+              </Link>
             </div>
 
             {children}
@@ -753,6 +754,14 @@ export function NingyoJoruriChallenge({
               </p>
             </div>
 
+            {/* ③ 詳細（本物の公演・イベント案内）へ */}
+            <Link
+              href="/arts/ningyoJoruri"
+              className="w-full py-4 mt-2 text-center rounded-2xl bg-[#D5512A] text-white font-extrabold text-xl shadow-md hover:opacity-90 transition"
+            >
+              本物の人形浄瑠璃を見に行く ▶
+            </Link>
+
             <div className="w-full flex items-center justify-between px-2 pt-6 pb-6">
               <button
                 type="button"
@@ -768,7 +777,7 @@ export function NingyoJoruriChallenge({
                 <span>もう一度修業する</span>
               </button>
 
-              <a
+              <Link
                 href="/challenge"
                 className="inline-flex items-center gap-2 text-base md:text-lg font-bold text-[#2a241e] hover:opacity-85 transition"
               >
@@ -776,7 +785,7 @@ export function NingyoJoruriChallenge({
                 <span className="w-7 h-7 rounded-full bg-[#017824] text-white flex items-center justify-center text-xs shrink-0">
                   ▶
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
         )}
