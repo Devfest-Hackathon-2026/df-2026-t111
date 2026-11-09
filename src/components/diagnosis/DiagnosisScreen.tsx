@@ -123,7 +123,7 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
         caption: "一、神秘の能面",
       },
       {
-        url: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&auto=format&fit=crop&q=80",
+        url: "/images/noh-dance-mai.png",
         caption: "二、静寂を切り裂く幽玄の舞い姿",
       },
       {
