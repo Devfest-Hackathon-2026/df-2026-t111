@@ -18,7 +18,7 @@ export function NingyoJoruriChallenge({
   const [activeStep, setActiveStep] = useState(0);
   const [stage, setStage] = useState<Stage>(1);
   const [timeLeft, setTimeLeft] = useState<number>(10);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [, setMessages] = useState<string[]>([]);
   const [scores, setScores] = useState<{ [key in Stage]?: number }>({});
   const [finalScore, setFinalScore] = useState<number>(0);
   const [masterComment, setMasterComment] = useState<string>("");
@@ -57,7 +57,9 @@ export function NingyoJoruriChallenge({
 
   const initAudio = () => {
     if (!audioCtxRef.current) {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (AudioCtx) {
         audioCtxRef.current = new AudioCtx();
       }
@@ -142,6 +144,89 @@ export function NingyoJoruriChallenge({
     return () => clearTimeout(introTimer);
   }, [phase, stage]);
 
+  const finishAllStages = (finalScoresMap: { [key in Stage]?: number }) => {
+    const s1 = finalScoresMap[1] || 70;
+    const s2 = finalScoresMap[2] || 70;
+    const s3 = finalScoresMap[3] || 70;
+    const total = Math.round((s1 + s2 + s3) / 3);
+    setFinalScore(total);
+
+    if (total >= 90) {
+      setMasterComment("🎵「見事！ 枠と音のタイミングを完全に捉えた見事な主遣いですな！」");
+    } else if (total >= 75) {
+      setMasterComment(
+        "🎵「なかなかの腕前。しかしもう少しテンポよく枠に合わせられると良いですな！」",
+      );
+    } else {
+      setMasterComment("🎵「音と枠の息が少しずれていたようですぞ。出直してまいれ！」");
+    }
+
+    setPhase("result");
+    setActiveStep(2);
+  };
+
+  const handleStageEnd = (currentStage: Stage) => {
+    const times = actionTimestamps;
+    let stageScore = 70;
+
+    if (currentStage === 1) {
+      const count = times.ashi.length;
+      if (count >= 4 && count <= 10) stageScore = 95;
+      else if (count > 0) stageScore = 80;
+      else stageScore = 50;
+    } else if (currentStage === 2) {
+      const totalCount = times.ashi.length + times.leftHand.length;
+      if (totalCount >= 8 && totalCount <= 12) stageScore = 96;
+      else if (totalCount >= 5) stageScore = 82;
+      else stageScore = 50;
+    } else if (currentStage === 3) {
+      const totalCount = times.head.length + times.leftHand.length + times.ashi.length;
+      if (totalCount >= 13 && totalCount <= 17) {
+        stageScore = 96;
+      } else if (totalCount >= 9) {
+        stageScore = 85;
+      } else if (totalCount > 0) {
+        stageScore = 70;
+      } else {
+        stageScore = 40;
+      }
+    }
+
+    const updatedScores = { ...scores, [currentStage]: stageScore };
+    setScores(updatedScores);
+
+    if (currentStage < 3) {
+      const nextStage = (currentStage + 1) as Stage;
+      setStage(nextStage);
+      setActiveStep(nextStage);
+      setPhase("stageIntro");
+    } else {
+      finishAllStages(updatedScores);
+    }
+  };
+
+  // 波紋を配列として管理し、重なってもアニメーションが途切れないようにする
+  const triggerTargetCue = (part: "ashi" | "leftHand" | "head") => {
+    const newId = cueIdCounter.current++;
+    const now = Date.now();
+
+    setActiveCues((prev) => ({
+      ...prev,
+      [part]: [...prev[part], { id: newId, startTime: now }],
+    }));
+
+    setTimeout(() => {
+      playInstrumentSound(part);
+    }, 800);
+
+    setTimeout(() => {
+      setActiveCues((prev) => ({
+        ...prev,
+        [part]: prev[part].filter((item) => item.id !== newId),
+      }));
+    }, 850);
+  };
+
   // ステージごとのリズム生成
   useEffect(() => {
     if (phase !== "playing") return;
@@ -217,90 +302,8 @@ export function NingyoJoruriChallenge({
       clearInterval(timer);
       clearInterval(beatTimer);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, stage]);
-
-  // 波紋を配列として管理し、重なってもアニメーションが途切れないようにする
-  const triggerTargetCue = (part: "ashi" | "leftHand" | "head") => {
-    const newId = cueIdCounter.current++;
-    const now = Date.now();
-
-    setActiveCues((prev) => ({
-      ...prev,
-      [part]: [...prev[part], { id: newId, startTime: now }],
-    }));
-
-    setTimeout(() => {
-      playInstrumentSound(part);
-    }, 800);
-
-    setTimeout(() => {
-      setActiveCues((prev) => ({
-        ...prev,
-        [part]: prev[part].filter((item) => item.id !== newId),
-      }));
-    }, 850);
-  };
-
-  const handleStageEnd = (currentStage: Stage) => {
-    const times = actionTimestamps;
-    let stageScore = 70;
-
-    if (currentStage === 1) {
-      const count = times.ashi.length;
-      if (count >= 4 && count <= 10) stageScore = 95;
-      else if (count > 0) stageScore = 80;
-      else stageScore = 50;
-    } else if (currentStage === 2) {
-      const totalCount = times.ashi.length + times.leftHand.length;
-      if (totalCount >= 8 && totalCount <= 12) stageScore = 96;
-      else if (totalCount >= 5) stageScore = 82;
-      else stageScore = 50;
-    } else if (currentStage === 3) {
-      const totalCount = times.head.length + times.leftHand.length + times.ashi.length;
-      if (totalCount >= 13 && totalCount <= 17) {
-        stageScore = 96;
-      } else if (totalCount >= 9) {
-        stageScore = 85;
-      } else if (totalCount > 0) {
-        stageScore = 70;
-      } else {
-        stageScore = 40;
-      }
-    }
-
-    const updatedScores = { ...scores, [currentStage]: stageScore };
-    setScores(updatedScores);
-
-    if (currentStage < 3) {
-      const nextStage = (currentStage + 1) as Stage;
-      setStage(nextStage);
-      setActiveStep(nextStage);
-      setPhase("stageIntro");
-    } else {
-      finishAllStages(updatedScores);
-    }
-  };
-
-  const finishAllStages = (finalScoresMap: { [key in Stage]?: number }) => {
-    const s1 = finalScoresMap[1] || 70;
-    const s2 = finalScoresMap[2] || 70;
-    const s3 = finalScoresMap[3] || 70;
-    const total = Math.round((s1 + s2 + s3) / 3);
-    setFinalScore(total);
-
-    if (total >= 90) {
-      setMasterComment("🎵「見事！ 枠と音のタイミングを完全に捉えた見事な主遣いですな！」");
-    } else if (total >= 75) {
-      setMasterComment(
-        "🎵「なかなかの腕前。しかしもう少しテンポよく枠に合わせられると良いですな！」",
-      );
-    } else {
-      setMasterComment("🎵「音と枠の息が少しずれていたようですぞ。出直してまいれ！」");
-    }
-
-    setPhase("result");
-    setActiveStep(2);
-  };
 
   const handleAction = (part: "ashi" | "leftHand" | "head") => {
     if (phase !== "playing") return;
@@ -333,6 +336,7 @@ export function NingyoJoruriChallenge({
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, stage]);
 
   const handleStepClick = (index: number) => {
