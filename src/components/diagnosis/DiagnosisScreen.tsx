@@ -119,15 +119,15 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     artRoute: "/arts/nogaku",
     photos: [
       {
-        url: "/images/noh-mask.png",
+        url: "/images/noh-mask.jpg",
         caption: "一、神秘の能面",
       },
       {
-        url: "/images/noh-dance-mai.png",
+        url: "/images/noh-dance-mai.jpg",
         caption: "二、静寂を切り裂く幽玄の舞い姿",
       },
       {
-        url: "/images/noh-stage.png",
+        url: "/images/noh-stage.jpg",
         caption: "三、六百五十年受け継がれる能舞台",
       },
     ],
@@ -151,11 +151,11 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
         caption: "一、三人で命を吹き込む精密な人形",
       },
       {
-        url: "/images/bunraku-yomi.png",
+        url: "/images/bunraku-yomi.jpg",
         caption: "二、太夫の語りと三味線の圧倒的熱量",
       },
       {
-        url: "/images/bunraku-stage.png",
+        url: "/images/bunraku-stage.jpg",
         caption: "三、息を呑む情熱的な愛憎劇の舞台",
       },
     ],
@@ -175,15 +175,15 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     artRoute: "/arts/kabuki",
     photos: [
       {
-        url: "/images/kabuki-mie.png",
+        url: "/images/kabuki-mie.jpg",
         caption: "一、迫力満点の隈取メイクと見得",
       },
       {
-        url: "/images/kabuki-tatimawari.png",
+        url: "/images/kabuki-tatimawari.jpg",
         caption: "二、豪華絢爛な舞台装置と立ち回り",
       },
       {
-        url: "/images/kabuki-ennsyutu.png",
+        url: "/images/kabuki-ennsyutu.jpg",
         caption: "三、客席を沸かせるド派手な演出",
       },
     ],
