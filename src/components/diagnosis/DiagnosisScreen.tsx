@@ -147,7 +147,7 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
     artRoute: "/arts/ningyoJoruri",
     photos: [
       {
-        url: "https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop&q=80",
+        url: "/images/bunraku-three-puppeteers.jpg",
         caption: "一、三人で命を吹き込む精密な人形",
       },
       {
