@@ -36,6 +36,30 @@ const PIN_COLORS: Record<PerformingArt, string> = {
 };
 const USER_PIN_COLOR = "#6b7280";
 
+/** ピンの中の文字（芸能ごと） */
+const PIN_LABELS: Record<PerformingArt, string> = {
+  kabuki: "歌",
+  nogaku: "能",
+  ningyoJoruri: "文",
+};
+
+/** 文字入りの大きなピン。地図をどれだけ縮小しても同じ大きさで見える */
+function createPin(color: string, label: string): HTMLElement {
+  const root = document.createElement("div");
+  root.style.cssText =
+    "display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));";
+  const head = document.createElement("div");
+  head.textContent = label;
+  head.style.cssText = `width:44px;height:44px;box-sizing:border-box;border-radius:50%;background:${color};border:3px solid #fff;color:#fff;font-size:22px;font-weight:900;line-height:38px;text-align:center;`;
+  const tail = document.createElement("div");
+  tail.style.cssText = `width:0;height:0;margin-top:-2px;border-left:9px solid transparent;border-right:9px solid transparent;border-top:13px solid ${color};`;
+  root.append(head, tail);
+  return root;
+}
+
+/** ほかの表示に隠されないようにするピンの設定 */
+const PIN_PRIORITY = { collisionBehavior: "REQUIRED", zIndex: 1000 } as const;
+
 /** 公演がないときの地図の中心（東京駅あたり） */
 const DEFAULT_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
 
@@ -166,16 +190,12 @@ export function EventMap({
         const bounds = new lib.LatLngBounds();
 
         for (const event of current) {
-          const pin = new lib.PinElement({
-            background: PIN_COLORS[event.artId],
-            borderColor: "#ffffff",
-            glyphColor: "#ffffff",
-          });
           const marker = new lib.AdvancedMarkerElement({
             map,
             position: event.location,
             title: `${event.title}（${event.venueName}）`,
-            content: pin.element,
+            content: createPin(PIN_COLORS[event.artId], PIN_LABELS[event.artId]),
+            ...PIN_PRIORITY,
           });
           marker.addListener("click", () => {
             infoWindow.setContent(infoContent(event));
@@ -187,18 +207,13 @@ export function EventMap({
         }
 
         if (here) {
-          const pin = new lib.PinElement({
-            background: USER_PIN_COLOR,
-            borderColor: "#ffffff",
-            glyphColor: "#ffffff",
-            scale: 0.8,
-          });
           markers.push(
             new lib.AdvancedMarkerElement({
               map,
               position: here,
               title: "現在地",
-              content: pin.element,
+              content: createPin(USER_PIN_COLOR, "今"),
+              ...PIN_PRIORITY,
             }),
           );
           bounds.extend(here);
