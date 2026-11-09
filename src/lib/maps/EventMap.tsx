@@ -85,7 +85,7 @@ function infoContent(event: ArtEvent): HTMLElement {
   const venue = document.createElement("p");
   venue.textContent = `${arts[event.artId].name}・${event.venueName}`;
   const link = document.createElement("a");
-  link.href = googleMapsUrl(event.location);
+  link.href = googleMapsUrl(event.location, event.venueName);
   link.target = "_blank";
   link.rel = "noopener noreferrer";
   link.style.color = "#1d4ed8";
@@ -118,7 +118,7 @@ function VenueList({
             <li key={event.venueName} className="flex items-center justify-between gap-2">
               <span>{event.venueName}</span>
               <a
-                href={googleMapsUrl(event.location)}
+                href={googleMapsUrl(event.location, event.venueName)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="shrink-0 text-blue-700 underline"

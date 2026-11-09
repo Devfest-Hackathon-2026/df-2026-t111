@@ -63,7 +63,7 @@ function WishCard({
         )}
         <a
           className={`${actionClass} bg-[#DDB442] text-[#2a241e]`}
-          href={googleMapsDirectionsUrl(event.location)}
+          href={googleMapsDirectionsUrl(event.location, event.venueName)}
           target="_blank"
           rel="noopener noreferrer"
         >

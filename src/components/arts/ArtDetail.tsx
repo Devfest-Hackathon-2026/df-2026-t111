@@ -53,7 +53,7 @@ function EventCard({
         </a>
         <a
           className={linkClass}
-          href={googleMapsUrl(event.location)}
+          href={googleMapsUrl(event.location, event.venueName)}
           target="_blank"
           rel="noopener noreferrer"
         >
