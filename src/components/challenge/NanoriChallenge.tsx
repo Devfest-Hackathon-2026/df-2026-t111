@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import type { CritiqueResponse, NanoriCritiqueRequest } from "@/types/api";
 
@@ -607,6 +608,14 @@ export function NanoriChallenge({ className = "", children }: NanoriChallengePro
                   {critique.comment}
                 </p>
               </div>
+
+              {/* ③ 詳細（本物の公演）へ */}
+              <Link
+                href="/arts/nogaku"
+                className="w-full py-4 mt-2 text-center rounded-2xl bg-[#D5512A] text-white font-extrabold text-xl shadow-md hover:opacity-90 transition"
+              >
+                本物の狂言を見に行く ▶
+              </Link>
 
               {/* 下部リンク */}
               <div className="w-full flex items-center justify-between px-2 pt-6 pb-6">

@@ -19,6 +19,8 @@ import type { ArtEvent, LatLng } from "@/data/events";
 import { googleMapsUrl } from "./links";
 import {
   type GoogleAdvancedMarker,
+  type GoogleInfoWindow,
+  type GoogleMap,
   hasMapsApiKey,
   loadGoogleMaps,
   MapsError,
@@ -115,6 +117,8 @@ export function EventMap({
 }: EventMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [failure, setFailure] = useState<string | null>(null);
+  const mapRef = useRef<GoogleMap | null>(null);
+  const infoRef = useRef<GoogleInfoWindow | null>(null);
 
   // 最新の events と onSelectEvent を、地図を作り直さずに使えるようにしておく
   const latest = useRef({ events, onSelectEvent });
@@ -139,17 +143,26 @@ export function EventMap({
         const container = containerRef.current;
         if (cancelled || !container) return;
         const current = latest.current.events;
-        const map = new lib.Map(container, {
-          mapId,
-          center: current[0]?.location ?? DEFAULT_CENTER,
-          zoom: 14,
-          disableDefaultUI: true,
-          zoomControl: true,
-          // スマホでページをスクロールしたときに、地図が動いてしまわないようにする
-          gestureHandling: "cooperative",
-          clickableIcons: false,
-        });
-        const infoWindow = new lib.InfoWindow();
+        const here =
+          userLat !== undefined && userLng !== undefined ? { lat: userLat, lng: userLng } : null;
+        // 公演データの読み込み前は作らない（作り直すと表示がずれるため、地図は 1 回だけ作って使い回す）
+        if (current.length === 0 && !here) return;
+        const map =
+          mapRef.current ??
+          new lib.Map(container, {
+            mapId,
+            center: current[0]?.location ?? DEFAULT_CENTER,
+            zoom: 14,
+            disableDefaultUI: true,
+            zoomControl: true,
+            // スマホでページをスクロールしたときに、地図が動いてしまわないようにする
+            gestureHandling: "cooperative",
+            clickableIcons: false,
+          });
+        mapRef.current = map;
+        infoRef.current?.close();
+        const infoWindow = infoRef.current ?? new lib.InfoWindow();
+        infoRef.current = infoWindow;
         const bounds = new lib.LatLngBounds();
 
         for (const event of current) {
@@ -173,8 +186,7 @@ export function EventMap({
           bounds.extend(event.location);
         }
 
-        if (userLat !== undefined && userLng !== undefined) {
-          const here = { lat: userLat, lng: userLng };
+        if (here) {
           const pin = new lib.PinElement({
             background: USER_PIN_COLOR,
             borderColor: "#ffffff",
@@ -194,7 +206,10 @@ export function EventMap({
 
         // 1 か所だけならその場所を中心に、2 か所以上なら全部が入るように
         if (markers.length > 1) map.fitBounds(bounds, 48);
-        else if (current[0]) map.setCenter(current[0].location);
+        else {
+          map.setCenter(current[0]?.location ?? here ?? DEFAULT_CENTER);
+          map.setZoom(15);
+        }
       })
       .catch((error: unknown) => {
         if (cancelled) return;
