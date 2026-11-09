@@ -19,6 +19,8 @@ import type { ArtEvent, LatLng } from "@/data/events";
 import { googleMapsUrl } from "./links";
 import {
   type GoogleAdvancedMarker,
+  type GoogleInfoWindow,
+  type GoogleMap,
   hasMapsApiKey,
   loadGoogleMaps,
   MapsError,
@@ -33,6 +35,30 @@ const PIN_COLORS: Record<PerformingArt, string> = {
   ningyoJoruri: "#1d4ed8",
 };
 const USER_PIN_COLOR = "#6b7280";
+
+/** ピンの中の文字（芸能ごと） */
+const PIN_LABELS: Record<PerformingArt, string> = {
+  kabuki: "歌",
+  nogaku: "能",
+  ningyoJoruri: "文",
+};
+
+/** 文字入りの大きなピン。地図をどれだけ縮小しても同じ大きさで見える */
+function createPin(color: string, label: string): HTMLElement {
+  const root = document.createElement("div");
+  root.style.cssText =
+    "display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));";
+  const head = document.createElement("div");
+  head.textContent = label;
+  head.style.cssText = `width:44px;height:44px;box-sizing:border-box;border-radius:50%;background:${color};border:3px solid #fff;color:#fff;font-size:22px;font-weight:900;line-height:38px;text-align:center;`;
+  const tail = document.createElement("div");
+  tail.style.cssText = `width:0;height:0;margin-top:-2px;border-left:9px solid transparent;border-right:9px solid transparent;border-top:13px solid ${color};`;
+  root.append(head, tail);
+  return root;
+}
+
+/** ほかの表示に隠されないようにするピンの設定 */
+const PIN_PRIORITY = { collisionBehavior: "REQUIRED", zIndex: 1000 } as const;
 
 /** 公演がないときの地図の中心（東京駅あたり） */
 const DEFAULT_CENTER: LatLng = { lat: 35.6812, lng: 139.7671 };
@@ -115,6 +141,8 @@ export function EventMap({
 }: EventMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [failure, setFailure] = useState<string | null>(null);
+  const mapRef = useRef<GoogleMap | null>(null);
+  const infoRef = useRef<GoogleInfoWindow | null>(null);
 
   // 最新の events と onSelectEvent を、地図を作り直さずに使えるようにしておく
   const latest = useRef({ events, onSelectEvent });
@@ -139,30 +167,35 @@ export function EventMap({
         const container = containerRef.current;
         if (cancelled || !container) return;
         const current = latest.current.events;
-        const map = new lib.Map(container, {
-          mapId,
-          center: current[0]?.location ?? DEFAULT_CENTER,
-          zoom: 14,
-          disableDefaultUI: true,
-          zoomControl: true,
-          // スマホでページをスクロールしたときに、地図が動いてしまわないようにする
-          gestureHandling: "cooperative",
-          clickableIcons: false,
-        });
-        const infoWindow = new lib.InfoWindow();
+        const here =
+          userLat !== undefined && userLng !== undefined ? { lat: userLat, lng: userLng } : null;
+        // 公演データの読み込み前は作らない（作り直すと表示がずれるため、地図は 1 回だけ作って使い回す）
+        if (current.length === 0 && !here) return;
+        const map =
+          mapRef.current ??
+          new lib.Map(container, {
+            mapId,
+            center: current[0]?.location ?? DEFAULT_CENTER,
+            zoom: 14,
+            disableDefaultUI: true,
+            zoomControl: true,
+            // スマホでページをスクロールしたときに、地図が動いてしまわないようにする
+            gestureHandling: "cooperative",
+            clickableIcons: false,
+          });
+        mapRef.current = map;
+        infoRef.current?.close();
+        const infoWindow = infoRef.current ?? new lib.InfoWindow();
+        infoRef.current = infoWindow;
         const bounds = new lib.LatLngBounds();
 
         for (const event of current) {
-          const pin = new lib.PinElement({
-            background: PIN_COLORS[event.artId],
-            borderColor: "#ffffff",
-            glyphColor: "#ffffff",
-          });
           const marker = new lib.AdvancedMarkerElement({
             map,
             position: event.location,
             title: `${event.title}（${event.venueName}）`,
-            content: pin.element,
+            content: createPin(PIN_COLORS[event.artId], PIN_LABELS[event.artId]),
+            ...PIN_PRIORITY,
           });
           marker.addListener("click", () => {
             infoWindow.setContent(infoContent(event));
@@ -173,20 +206,14 @@ export function EventMap({
           bounds.extend(event.location);
         }
 
-        if (userLat !== undefined && userLng !== undefined) {
-          const here = { lat: userLat, lng: userLng };
-          const pin = new lib.PinElement({
-            background: USER_PIN_COLOR,
-            borderColor: "#ffffff",
-            glyphColor: "#ffffff",
-            scale: 0.8,
-          });
+        if (here) {
           markers.push(
             new lib.AdvancedMarkerElement({
               map,
               position: here,
               title: "現在地",
-              content: pin.element,
+              content: createPin(USER_PIN_COLOR, "今"),
+              ...PIN_PRIORITY,
             }),
           );
           bounds.extend(here);
@@ -194,7 +221,10 @@ export function EventMap({
 
         // 1 か所だけならその場所を中心に、2 か所以上なら全部が入るように
         if (markers.length > 1) map.fitBounds(bounds, 48);
-        else if (current[0]) map.setCenter(current[0].location);
+        else {
+          map.setCenter(current[0]?.location ?? here ?? DEFAULT_CENTER);
+          map.setZoom(15);
+        }
       })
       .catch((error: unknown) => {
         if (cancelled) return;

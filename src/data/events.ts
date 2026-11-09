@@ -178,3 +178,42 @@ export function getEventsForArt(artId: PerformingArt): ArtEvent[] {
 export function getUpcomingEventsForArt(artId: PerformingArt, today: string): ArtEvent[] {
   return getEventsForArt(artId).filter((event) => !isEventOver(event, today));
 }
+
+function addOneDay(ymd: string): string {
+  const date = new Date(`${ymd}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
+/** 今日以降で、いちばん近い公演日を返す（休演日は飛ばす）。もう公演日がなければ null */
+export function getNextPerformanceDate(event: ArtEvent, today: string): string | null {
+  let date = event.startDate > today ? event.startDate : today;
+  while (date <= event.endDate) {
+    if (!event.closedDates.includes(date)) return date;
+    date = addOneDay(date);
+  }
+  return null;
+}
+
+/**
+ * Google カレンダーの登録画面を開くリンクを返す（API キーはいらない）。
+ * いちばん近い公演日の最初の回で作る。日時は、登録の画面で変えられる。
+ * 終演時刻はデータにないので、開演の 3 時間後を仮の終わりにする。もう公演日がなければ null
+ */
+export function googleCalendarUrl(event: ArtEvent, today: string): string | null {
+  const date = getNextPerformanceDate(event, today);
+  const showTime = event.showTimes[0];
+  if (!date || !showTime) return null;
+  const [hour, minute] = showTime.split(":");
+  const day = date.replaceAll("-", "");
+  const endHour = String(Number(hour) + 3).padStart(2, "0");
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.title,
+    dates: `${day}T${hour}${minute}00/${day}T${endHour}${minute}00`,
+    ctz: "Asia/Tokyo",
+    location: `${event.venueName} ${event.address}`,
+    details: `開演：${event.showTimes.join(" / ")}\n公式ページ：${event.officialUrl}\n※ 日程や終演時刻は公式ページで確かめてください。`,
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}

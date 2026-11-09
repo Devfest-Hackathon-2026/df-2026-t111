@@ -43,10 +43,6 @@ export interface GoogleAdvancedMarker {
   addListener(eventName: "click", handler: () => void): unknown;
 }
 
-export interface GooglePinElement {
-  element: HTMLElement;
-}
-
 export interface GoogleMapsLibraries {
   Map: new (
     element: HTMLElement,
@@ -67,13 +63,10 @@ export interface GoogleMapsLibraries {
     position: LatLng;
     title?: string;
     content?: HTMLElement;
+    /** REQUIRED にすると、地図の文字やアイコンに隠されず必ず表示される */
+    collisionBehavior?: "REQUIRED";
+    zIndex?: number;
   }) => GoogleAdvancedMarker;
-  PinElement: new (options: {
-    background?: string;
-    borderColor?: string;
-    glyphColor?: string;
-    scale?: number;
-  }) => GooglePinElement;
 }
 
 interface GoogleMapsNamespace {
@@ -156,7 +149,6 @@ export async function loadGoogleMaps(): Promise<GoogleMapsLibraries> {
     InfoWindow: mapsLib.InfoWindow,
     LatLngBounds: coreLib.LatLngBounds,
     AdvancedMarkerElement: markerLib.AdvancedMarkerElement,
-    PinElement: markerLib.PinElement,
   } as GoogleMapsLibraries;
 }
 

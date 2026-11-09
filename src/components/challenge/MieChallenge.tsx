@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
 export interface CritiqueResponse {
@@ -593,6 +594,14 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   {critique.comment}
                 </p>
               </div>
+
+              {/* ③ 詳細（本物の公演）へ */}
+              <Link
+                href="/arts/kabuki"
+                className="w-full py-4 mt-2 text-center rounded-2xl bg-[#D5512A] text-white font-extrabold text-xl shadow-md hover:opacity-90 transition"
+              >
+                本物の歌舞伎を見に行く ▶
+              </Link>
 
               <div className="w-full flex items-center justify-between px-2 pt-6 pb-6">
                 <button
