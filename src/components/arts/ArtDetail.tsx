@@ -15,6 +15,7 @@ import { distanceKm, formatDistance, sortByDistance } from "@/lib/maps/distance"
 import { EventMap } from "@/lib/maps/EventMap";
 import { googleMapsDirectionsUrl } from "@/lib/maps/links";
 import { formatDay, formatPeriod } from "./format";
+import { RecommendedPerformances } from "./RecommendedPerformances";
 import { ArrowLabel, StagePage, StageSection } from "./StagePage";
 
 const actionBtnClass =
@@ -333,11 +334,11 @@ export function ArtDetail({ artId }: { artId: PerformingArt }) {
       </StageSection>
 
       {/* ========================================= */}
-      {/* 本物を見に行こう（大幅刷新） */}
+      {/* 本物を見に行こう（小松菜さんデザイン反映） */}
       {/* ========================================= */}
       <StageSection title="本物を見に行こう">
         {/* 初心者向けガイダンスステップ */}
-        <div className="mb-4 bg-[#f4efe6] border border-[#8c7863] rounded-2xl p-4 shadow-xs">
+        <div className="mb-5 bg-[#f4efe6] border border-[#8c7863] rounded-2xl p-4 shadow-xs">
           <h3 className="font-extrabold text-[#2a241e] text-base mb-2 flex items-center gap-2">
             <span>✨</span>
             <span>はじめてでも大丈夫！鑑賞の3ステップ</span>
@@ -345,7 +346,7 @@ export function ArtDetail({ artId }: { artId: PerformingArt }) {
           <div className="grid grid-cols-3 gap-2 text-center text-xs">
             <div className="bg-white/70 rounded-xl p-2.5 border border-[#8c7863]/30">
               <span className="block font-extrabold text-[#017824] mb-1">STEP 1</span>
-              <span>公演を選ぶ</span>
+              <span>条件で選ぶ</span>
             </div>
             <div className="bg-white/70 rounded-xl p-2.5 border border-[#8c7863]/30">
               <span className="block font-extrabold text-[#DDB442] mb-1">STEP 2</span>
@@ -357,58 +358,75 @@ export function ArtDetail({ artId }: { artId: PerformingArt }) {
             </div>
           </div>
           <p className="mt-2.5 text-xs text-[#6b5c4d] leading-relaxed">
-            字幕やイヤホンガイドの貸出がある劇場も多く、知識ゼロでも楽しめます。気になる公演は「♡ 行きたい」に登録して、カレンダーや地図で計画を立てましょう！
+            字幕やイヤホンガイドの貸出がある劇場も多く、知識ゼロでも楽しめます。気になる公演は「♡」で保存して、カレンダーや地図で計画を立てましょう！
           </p>
         </div>
 
-        {message && (
-          <p className="mb-3 rounded-xl bg-white/80 border border-[#D5512A] p-3 text-sm font-bold text-[#a33a1c]">
-            {message}
+        {/* =========================================== */}
+        {/* 小松菜さんデザイン：おすすめ公演スタックカード */}
+        {/* =========================================== */}
+        <div className="pt-2">
+          <h3 className="text-2xl font-extrabold text-[#2a241e] mb-2 flex items-center justify-between">
+            <span>おすすめ公演</span>
+            <span className="text-xs bg-[#D5512A] text-white px-2.5 py-0.5 rounded-full font-bold">
+              初心者おすすめ
+            </span>
+          </h3>
+          <p className="text-xs text-[#6b5c4d] mb-3">
+            地域や予算を選ぶと、あなたにぴったりの公演が重なり合って現れます。
           </p>
-        )}
+          <RecommendedPerformances artId={artId} />
+        </div>
 
-        {today && events.length === 0 ? (
-          <p className="leading-relaxed bg-[#f4efe6] p-4 rounded-xl border border-[#8c7863]">
-            いま載せている公演はありません。新しい公演が決まったら、ここに出ます。
-          </p>
-        ) : (
-          <div className="space-y-4">
-            {/* 地図トグルと現在地ソート */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
-              <button
-                type="button"
-                onClick={() => setShowMap(!showMap)}
-                className="py-2.5 px-4 rounded-xl bg-[#f4efe6] border border-[#8c7863] text-sm font-bold text-[#2a241e] hover:bg-white transition cursor-pointer flex items-center justify-center gap-1.5"
-              >
-                <span>🗺️</span>
-                <span>劇場の地図を{showMap ? "隠す" : "見る"}</span>
-                <span className="text-xs">{showMap ? "▲" : "▼"}</span>
-              </button>
-              <button
-                type="button"
-                onClick={findNearby}
-                className="py-2.5 px-4 rounded-xl border-2 border-[#2a241e] bg-white/40 text-sm font-bold text-[#2a241e] cursor-pointer hover:bg-white transition flex items-center justify-center gap-1.5"
-              >
-                <span>📍</span>
-                <span>現在地から近い順</span>
-              </button>
-            </div>
+        {/* その他の公式公演一覧（折りたたみ式） */}
+        <div className="mt-6 border-t border-[#8c7863]/30 pt-4">
+          <details className="bg-[#f4efe6] border border-[#8c7863] rounded-2xl p-4 group">
+            <summary className="font-extrabold cursor-pointer list-none flex items-center justify-between text-[#2a241e] text-base">
+              <span className="flex items-center gap-2">
+                <span>🏛️</span>
+                <span>その他の直近公演・地図をすべて見る（{events.length}件）</span>
+              </span>
+              <span className="text-xs font-bold text-[#6b5c4d] group-open:rotate-180 transition-transform">
+                ▼
+              </span>
+            </summary>
+            
+            <div className="mt-4 pt-3 border-t border-[#8c7863]/20 space-y-4">
+              {message && (
+                <p className="rounded-xl bg-white/80 border border-[#D5512A] p-3 text-sm font-bold text-[#a33a1c]">
+                  {message}
+                </p>
+              )}
 
-            {/* 地図コンポーネント（開閉可能） */}
-            {showMap && (
-              <div className="rounded-2xl overflow-hidden border border-[#8c7863] shadow-xs">
-                <EventMap events={events} userLocation={here} className="h-60 w-full" />
+              {/* 地図トグルと現在地ソート */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowMap(!showMap)}
+                  className="py-2.5 px-4 rounded-xl bg-white border border-[#8c7863] text-sm font-bold text-[#2a241e] hover:bg-[#ece5d8] transition cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <span>🗺️</span>
+                  <span>劇場の地図を{showMap ? "隠す" : "表示する"}</span>
+                  <span className="text-xs">{showMap ? "▲" : "▼"}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={findNearby}
+                  className="py-2.5 px-4 rounded-xl border-2 border-[#2a241e] bg-white/60 text-sm font-bold text-[#2a241e] cursor-pointer hover:bg-white transition flex items-center justify-center gap-1.5"
+                >
+                  <span>📍</span>
+                  <span>現在地から近い順</span>
+                </button>
               </div>
-            )}
 
-            {/* 公演一覧 */}
-            <div className="pt-2">
-              <h4 className="font-extrabold text-lg text-[#2a241e] mb-3 flex items-center justify-between">
-                <span>直近の公演一覧</span>
-                <span className="text-xs bg-[#017824] text-white px-2.5 py-0.5 rounded-full">
-                  {events.length}件
-                </span>
-              </h4>
+              {/* 地図コンポーネント（開閉可能） */}
+              {showMap && (
+                <div className="rounded-2xl overflow-hidden border border-[#8c7863] shadow-xs">
+                  <EventMap events={events} userLocation={here} className="h-60 w-full" />
+                </div>
+              )}
+
+              {/* 公演一覧リスト */}
               <ul className="space-y-4">
                 {events.map((event) => (
                   <EventCard
@@ -421,8 +439,8 @@ export function ArtDetail({ artId }: { artId: PerformingArt }) {
                 ))}
               </ul>
             </div>
-          </div>
-        )}
+          </details>
+        </div>
 
         {/* 行きたいリストへのリンク */}
         <Link
