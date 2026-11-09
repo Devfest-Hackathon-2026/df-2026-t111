@@ -127,7 +127,7 @@ const RESULTS_DATA: Record<ArtType, ResultInfo> = {
         caption: "二、静寂を切り裂く幽玄の舞い姿",
       },
       {
-        url: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=600&auto=format&fit=crop&q=80",
+        url: "/images/noh-stage.png",
         caption: "三、六百五十年受け継がれる能舞台",
       },
     ],
