@@ -316,10 +316,14 @@ export function NanoriChallenge({ className = "", children }: NanoriChallengePro
                 </p>
               </div>
 
-              {/* イラスト／画像枠 */}
-              <div className="w-40 h-52 rounded-lg overflow-hidden shrink-0 shadow-md bg-[#c2b59b] border border-[#8c7863] flex flex-col items-center justify-center text-center p-2">
-                <div className="text-5xl mb-2">📜</div>
-                <span className="text-sm font-bold text-[#3a3229]">名乗りのイメージ</span>
+              {/* 能面の写真 */}
+              <div className="w-40 h-52 rounded-lg overflow-hidden shrink-0 shadow-md bg-[#c2b59b] border border-[#8c7863]">
+                <img
+                  src="/images/noh-mask.jpg"
+                  alt="能面の写真"
+                  className="w-full h-full object-cover"
+                  style={{ objectPosition: "35% center" }}
+                />
               </div>
             </section>
 
