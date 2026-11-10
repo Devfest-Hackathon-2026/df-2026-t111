@@ -15,9 +15,15 @@ import {
 import { useTodayInJapan } from "@/data/use-today";
 import { onWishesChange, removeWish, type Wish, WishlistError } from "@/lib/firebase/wishlist";
 import { EventMap } from "@/lib/maps/EventMap";
-import { googleMapsDirectionsUrl } from "@/lib/maps/links";
+import { googleMapsDirectionsUrl, googleMapsDirectionsUrlByName } from "@/lib/maps/links";
 import { formatDay, formatPeriod } from "@/components/arts/format";
+import {
+  getRecommendedPerformance,
+  type PerformanceItem,
+  recommendedVenueQuery,
+} from "@/components/arts/RecommendedPerformances";
 import { ArrowLabel, StagePage } from "@/components/arts/StagePage";
+import type { PerformingArt } from "@/types/api";
 
 const actionClass =
   "block py-3 rounded-xl text-center font-bold shadow-sm transition hover:opacity-90";
@@ -99,6 +105,56 @@ function WishCard({
   );
 }
 
+// ③ 詳細の「おすすめ公演」カードから登録したもの。日程と座標のデータがないので、
+// カレンダー追加と地図のピンは出さず、公式ページと道順だけを案内する。
+function RecommendedWishCard({
+  artId,
+  item,
+  onRemove,
+}: {
+  artId: PerformingArt;
+  item: PerformanceItem;
+  onRemove: () => void;
+}) {
+  return (
+    <li className="bg-[#f4efe6] border border-[#8c7863] rounded-xl p-4 shadow-sm">
+      <p className="text-sm font-bold text-[#017824]">{arts[artId].name}　おすすめ公演</p>
+      <p className="text-lg font-extrabold text-[#2a241e]">{item.name}</p>
+      <p className="mt-1 font-bold">{item.venue}</p>
+      <p className="mt-1 text-sm">日程は公式ページで確認してください。</p>
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <a
+          className={`${actionClass} bg-[#DDB442] text-[#2a241e]`}
+          href={googleMapsDirectionsUrlByName(recommendedVenueQuery(item))}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          行き方を見る
+        </a>
+        <a
+          className={`${actionClass} bg-white/70 border border-[#8c7863] text-[#2a241e]`}
+          href={item.link}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          公式ページ
+        </a>
+      </div>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="mt-3 w-full text-sm font-bold text-[#6b5c4d] underline cursor-pointer"
+      >
+        リストから外す
+      </button>
+    </li>
+  );
+}
+
+type WishEntry =
+  | { kind: "event"; wish: Wish; event: ArtEvent }
+  | { kind: "recommended"; wish: Wish; artId: PerformingArt; item: PerformanceItem };
+
 export function WishlistScreen() {
   const today = useTodayInJapan();
   const [wishes, setWishes] = useState<Wish[] | null>(null);
@@ -106,12 +162,15 @@ export function WishlistScreen() {
 
   useEffect(() => onWishesChange(setWishes), []);
 
-  const items = (wishes ?? []).flatMap((wish) => {
+  // 公演データ（events.ts）にあればそちらを、なければおすすめ公演カードのデータを探す
+  const items: WishEntry[] = (wishes ?? []).flatMap((wish): WishEntry[] => {
     const event = getEvent(wish.eventId);
-    return event ? [{ wish, event }] : [];
+    if (event) return [{ kind: "event", wish, event }];
+    const recommended = getRecommendedPerformance(wish.eventId);
+    return recommended ? [{ kind: "recommended", wish, ...recommended }] : [];
   });
   const mapEvents = items
-    .map(({ event }) => event)
+    .flatMap((entry) => (entry.kind === "event" ? [entry.event] : []))
     .filter((event) => (today ? !isEventOver(event, today) : false));
 
   async function remove(eventId: string) {
@@ -159,14 +218,23 @@ export function WishlistScreen() {
             </div>
           )}
           <ul className="space-y-4">
-            {items.map(({ wish, event }) => (
-              <WishCard
-                key={wish.eventId}
-                event={event}
-                today={today}
-                onRemove={() => void remove(wish.eventId)}
-              />
-            ))}
+            {items.map((entry) =>
+              entry.kind === "event" ? (
+                <WishCard
+                  key={entry.wish.eventId}
+                  event={entry.event}
+                  today={today}
+                  onRemove={() => void remove(entry.wish.eventId)}
+                />
+              ) : (
+                <RecommendedWishCard
+                  key={entry.wish.eventId}
+                  artId={entry.artId}
+                  item={entry.item}
+                  onRemove={() => void remove(entry.wish.eventId)}
+                />
+              ),
+            )}
           </ul>
         </>
       )}

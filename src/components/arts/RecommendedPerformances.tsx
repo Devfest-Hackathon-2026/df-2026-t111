@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { PerformingArt } from "@/types/api";
 import { addWish, onWishesChange, removeWish, WishlistError } from "@/lib/firebase/wishlist";
 
-interface PerformanceItem {
+export interface PerformanceItem {
   id: string;
   name: string;
   desc: string;
@@ -123,6 +123,29 @@ const performancesData: Record<string, PerformanceItem[]> = {
     },
   ],
 };
+
+/**
+ * おすすめ公演を ID から探す（④ 行きたい で使う）。
+ * おすすめカードの ♡ は、この ID を「行きたい」に保存している。
+ */
+export function getRecommendedPerformance(
+  id: string,
+): { artId: PerformingArt; item: PerformanceItem } | undefined {
+  for (const [artId, items] of Object.entries(performancesData)) {
+    const item = items.find((p) => p.id === id);
+    if (item) return { artId: artId as PerformingArt, item };
+  }
+  return undefined;
+}
+
+/** 地図検索に使う会場名（埋め込み地図と同じ検索語。読めなければ表示用の会場名） */
+export function recommendedVenueQuery(item: PerformanceItem): string {
+  try {
+    return new URL(item.mapEmbed).searchParams.get("q") ?? item.venue;
+  } catch {
+    return item.venue;
+  }
+}
 
 const rankNames = ["第一位", "第二位", "第三位", "第四位"];
 

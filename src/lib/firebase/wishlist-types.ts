@@ -5,7 +5,7 @@ import type { PerformingArt } from "@/types/api";
 
 /** 「行きたい」1 件 */
 export interface Wish {
-  /** 公演・体験会の ID（src/data/events.ts の id） */
+  /** 公演・体験会の ID（src/data/events.ts の id、または ③ のおすすめ公演カードの id） */
   eventId: string;
   /** どの伝統芸能か */
   artId: PerformingArt;

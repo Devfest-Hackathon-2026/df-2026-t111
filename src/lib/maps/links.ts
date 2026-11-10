@@ -19,3 +19,8 @@ export function googleMapsDirectionsUrl(destination: LatLng, venueName?: string)
   const dest = venueName ? encodeURIComponent(venueName) : point(destination);
   return `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
 }
+
+/** 現在地からその場所までの道順を、場所の名前だけで開くリンク（座標がないおすすめ公演で使う） */
+export function googleMapsDirectionsUrlByName(placeName: string): string {
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(placeName)}`;
+}
