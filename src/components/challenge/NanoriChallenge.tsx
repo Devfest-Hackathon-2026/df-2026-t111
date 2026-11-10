@@ -606,22 +606,14 @@ export function NanoriChallenge({ className = "", children }: NanoriChallengePro
                 </div>
               </div>
 
-              {/* 音声比較セクション（お手本 vs あなた） */}
-              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 mb-6">
-                <div className="flex flex-col items-center bg-[#f4efe6] border border-[#8c7863] rounded-xl p-4 shadow-sm">
-                  <span className="text-base font-extrabold text-[#2a241e] mb-2">お手本音声</span>
-                  {/* お手本の音声ファイルパスは適宜調整してください */}
-                  <audio src="/audio/nanori-example.mp3" controls className="w-full" />
-                </div>
-
-                <div className="flex flex-col items-center bg-[#f4efe6] border border-[#8c7863] rounded-xl p-4 shadow-sm">
-                  <span className="text-base font-extrabold text-[#2a241e] mb-2">あなたの音声</span>
-                  {audioBlobUrl ? (
-                    <audio src={audioBlobUrl} controls className="w-full" />
-                  ) : (
-                    <p className="text-xs text-neutral-600 py-2">音声データがありません</p>
-                  )}
-                </div>
+              {/* あなたの音声 */}
+              <div className="w-full mt-2 mb-6 flex flex-col items-center bg-[#f4efe6] border border-[#8c7863] rounded-xl p-4 shadow-sm">
+                <span className="text-base font-extrabold text-[#2a241e] mb-2">あなたの音声</span>
+                {audioBlobUrl ? (
+                  <audio src={audioBlobUrl} controls className="w-full" />
+                ) : (
+                  <p className="text-xs text-neutral-600 py-2">音声データがありません</p>
+                )}
               </div>
 
               {/* 講評見出し */}
