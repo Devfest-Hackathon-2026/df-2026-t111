@@ -328,10 +328,13 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                 </p>
               </div>
 
-              {/* 写真プレビュー枠 */}
-              <div className="w-40 h-52 rounded-lg overflow-hidden shrink-0 shadow-md bg-[#c2b59b] border border-[#8c7863] flex flex-col items-center justify-center text-center p-2">
-                <div className="text-5xl mb-2">🎭</div>
-                <span className="text-sm font-bold text-[#3a3229]">見得の写真</span>
+              {/* 見得の写真 */}
+              <div className="w-40 h-52 rounded-lg overflow-hidden shrink-0 shadow-md bg-[#c2b59b] border border-[#8c7863]">
+                <img
+                  src="/images/kabuki-mie.jpg"
+                  alt="歌舞伎役者が見得を切る様子"
+                  className="w-full h-full object-cover object-center"
+                />
               </div>
             </section>
 
