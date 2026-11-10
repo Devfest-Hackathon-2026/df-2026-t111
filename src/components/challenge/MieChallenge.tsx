@@ -41,6 +41,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
   const [phase, setPhase] = useState<Phase>("intro");
   const [activeStep, setActiveStep] = useState(0);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [isImageOpen, setIsImageOpen] = useState(false);
   const [critique, setCritique] = useState<CritiqueResponse | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isStartingCamera, setIsStartingCamera] = useState<boolean>(false);
@@ -429,34 +430,38 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
               </h2>
 
               <div className="flex gap-6 items-center p-1">
-                <div className="w-40 h-52 rounded-lg overflow-hidden shrink-0 shadow-md bg-[#c2b59b] border border-[#8c7863] flex flex-col items-center justify-center text-center p-2">
-                  {capturedImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={capturedImage}
-                      alt="撮影画像"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <>
-                      <div className="text-5xl mb-2">👘</div>
-                      <span className="text-sm font-bold text-[#3a3229]">お手本ポーズ</span>
-                    </>
-                  )}
+                <div className="shrink-0 flex flex-col items-center gap-1">
+                  <div className="w-40 h-52 rounded-lg overflow-hidden shadow-md bg-[#c2b59b] border border-[#8c7863]">
+                    <button
+                      type="button"
+                      onClick={() => setIsImageOpen(true)}
+                      className="w-full h-full cursor-zoom-in"
+                      aria-label="お手本画像を拡大"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/images/mie_sample.png"
+                        alt="元禄見得のお手本ポーズ"
+                        className="w-full h-full object-cover object-center"
+                      />
+                    </button>
+                  </div>
+
+                  <span className="text-xs text-[#6b5c4d]">クリックで拡大</span>
                 </div>
 
                 <div className="flex-1 flex flex-col justify-around self-stretch text-sm md:text-base text-[#2a241e] font-light tracking-wide py-1">
                   <div className="pb-2.5 border-b border-[#2a241e]/20 flex items-start gap-2">
                     <span className="font-bold text-[#D5512A]">1.</span>
-                    <span>視線を一点にグッと据える</span>
+                    <span>片手を頭の上に、もう片手を前に突き出す</span>
                   </div>
                   <div className="pb-2.5 border-b border-[#2a241e]/20 flex items-start gap-2">
                     <span className="font-bold text-[#D5512A]">2.</span>
-                    <span>ポーズの瞬間に動きを完全にとめる</span>
+                    <span>片足を踏み出し、膝を曲げて腰を落とす</span>
                   </div>
                   <div className="flex items-start gap-2 pt-0.5">
                     <span className="font-bold text-[#D5512A]">3.</span>
-                    <span>首を力強く傾けて角度をつける</span>
+                    <span>顔を正面に向け、視線を鋭く定める</span>
                   </div>
                 </div>
               </div>
@@ -690,6 +695,31 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
           </p>
         </footer>
       </div>
+      {isImageOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-6 cursor-zoom-out"
+          onClick={() => setIsImageOpen(false)}
+          role="presentation"
+        >
+          <div className="relative max-w-lg w-full flex justify-center">
+            <button
+              type="button"
+              onClick={() => setIsImageOpen(false)}
+              className="absolute -top-10 right-0 text-white text-3xl cursor-pointer"
+              aria-label="拡大画像を閉じる"
+            >
+              ×
+            </button>
+
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/mie_sample.png"
+              alt="元禄見得のお手本ポーズ（拡大）"
+              className="max-w-full max-h-[85vh] object-contain rounded-lg"
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
