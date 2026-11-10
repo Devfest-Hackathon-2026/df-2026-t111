@@ -39,6 +39,25 @@ export function NanoriChallenge({ className = "", children }: NanoriChallengePro
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const instagramRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = instagramRef.current;
+    if (!container) return;
+
+    const script = document.createElement("script");
+    script.src = "https://www.instagram.com/embed.js";
+    script.async = true;
+    script.onload = () => {
+      (
+        window as Window & {
+          instgrm?: { Embeds?: { process: () => void } };
+        }
+      ).instgrm?.Embeds?.process();
+    };
+
+    container.appendChild(script);
+  }, []);
 
   // マイク・タイマー停止処理
   const cleanup = () => {
@@ -417,24 +436,30 @@ export function NanoriChallenge({ className = "", children }: NanoriChallengePro
                 お手本
               </h2>
 
-              <div className="flex gap-6 items-center p-1">
-                <div className="w-40 h-52 rounded-lg overflow-hidden shrink-0 shadow-md bg-[#c2b59b] border border-[#8c7863] flex flex-col items-center justify-center text-center p-2">
-                  <div className="text-5xl mb-2">🗣️</div>
-                  <span className="text-sm font-bold text-[#3a3229]">名乗りのお手本</span>
+              <div className="flex flex-col gap-6 p-1">
+                {" "}
+                <div className="w-full h-[520px] rounded-lg overflow-hidden shadow-md bg-white border border-[#8c7863]">
+                  {" "}
+                  <iframe
+                    src="https://www.instagram.com/reel/DBSEpNsSYzF/embed"
+                    title="名乗りのお手本"
+                    className="h-full w-full"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
                 </div>
-
                 <div className="flex-1 flex flex-col justify-around self-stretch text-sm md:text-base text-[#2a241e] font-light tracking-wide py-1">
                   <div className="pb-2.5 border-b border-[#2a241e]/20 flex items-start gap-2">
                     <span className="font-bold text-[#D5512A]">1.</span>
-                    <span>お腹から大きくハッキリと声を張る</span>
+                    <span>お腹から大きな声を出す</span>
                   </div>
                   <div className="pb-2.5 border-b border-[#2a241e]/20 flex items-start gap-2">
                     <span className="font-bold text-[#D5512A]">2.</span>
-                    <span>リズミカルな調子を意識して語る</span>
+                    <span>声に抑揚をつけて話す</span>
                   </div>
                   <div className="flex items-start gap-2 pt-0.5">
                     <span className="font-bold text-[#D5512A]">3.</span>
-                    <span>ユーモアと勢いを持って名乗る</span>
+                    <span>ゆっくりと間をとって話す</span>
                   </div>
                 </div>
               </div>
