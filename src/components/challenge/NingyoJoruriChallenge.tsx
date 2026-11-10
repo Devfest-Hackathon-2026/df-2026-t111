@@ -63,6 +63,21 @@ export function NingyoJoruriChallenge({
   // AudioContextの保持用
   const audioCtxRef = useRef<AudioContext | null>(null);
 
+  // 遅延音タイマー・未消化キューの管理用（ステージ終了時や画面遷移時の遅延音防止）
+  const pendingTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const clearAllPendingTimers = () => {
+    pendingTimersRef.current.forEach((t) => clearTimeout(t));
+    pendingTimersRef.current = [];
+  };
+
+  // コンポーネント破棄時に残っているタイマーを全クリア
+  useEffect(() => {
+    return () => {
+      clearAllPendingTimers();
+    };
+  }, []);
+
   const initAudio = () => {
     if (!audioCtxRef.current) {
       const AudioCtx =
@@ -128,6 +143,8 @@ export function NingyoJoruriChallenge({
 
   // 修業を中断してintroに戻る関数
   const handleAbort = () => {
+    clearAllPendingTimers();
+    setActiveCues({ ashi: [], leftHand: [], head: [] });
     setPhase("intro");
     setActiveStep(0);
   };
@@ -177,6 +194,10 @@ export function NingyoJoruriChallenge({
   };
 
   const handleStageEnd = (currentStage: Stage) => {
+    // タイムアップ直前のキューや遅延音タイマーを直ちに全クリア（遅延音の防止）
+    clearAllPendingTimers();
+    setActiveCues({ ashi: [], leftHand: [], head: [] });
+
     const times = actionTimestampsRef.current;
     let stageScore = 70;
 
@@ -227,16 +248,18 @@ export function NingyoJoruriChallenge({
       [part]: [...prev[part], { id: newId, startTime: now }],
     }));
 
-    setTimeout(() => {
+    const soundTimer = setTimeout(() => {
       playInstrumentSound(part);
     }, 800);
+    pendingTimersRef.current.push(soundTimer);
 
-    setTimeout(() => {
+    const cleanupTimer = setTimeout(() => {
       setActiveCues((prev) => ({
         ...prev,
         [part]: prev[part].filter((item) => item.id !== newId),
       }));
     }, 850);
+    pendingTimersRef.current.push(cleanupTimer);
   };
 
   // ステージごとのリズム生成
@@ -313,6 +336,8 @@ export function NingyoJoruriChallenge({
     return () => {
       clearInterval(timer);
       clearInterval(beatTimer);
+      clearAllPendingTimers();
+      setActiveCues({ ashi: [], leftHand: [], head: [] });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, stage]);

@@ -25,7 +25,7 @@ const performancesData: Record<string, PerformanceItem[]> = {
       desc: "人形浄瑠璃の聖地・大阪日本橋で開催される、若者・初心者のための超人気入門公演です。太夫の迫真の語り分けや三人の人形遣いの息の合った神ワザを、親切な生解説付きで間近に体験できます。近松門左衛門の名作『曾根崎心中』のクライマックスは、涙なしには見られない感動が待っています。字幕表示や音声ガイドも完備されており、予備知識ゼロの1人観劇でも安心して世界観に深く没入できます。",
       stars: { area: "★★★", budget: "★★★", date: "★★★", who: "★★★" },
       ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
-      link: "https://www.ntj.jac.go.jp/bunraku.html",
+      link: "https://www.ntj.jac.go.jp/bunraku/",
       venue: "国立文楽劇場（大阪・日本橋）",
       mapEmbed:
         "https://maps.google.com/maps?q=%E5%9B%BD%E7%AB%8B%E6%96%87%E6%A5%BD%E5%8A%87%E5%A0%B4&z=15&output=embed",
@@ -36,7 +36,7 @@ const performancesData: Record<string, PerformanceItem[]> = {
       desc: "近松門左衛門ゆかりの寺社が佇む歴史の街で開催される、地元密着の親しみやすい文楽公演です。客席と舞台の距離が驚くほど近く、人形の繊細な指先の震えや表情の移ろいを肌で感じることができます。太棹三味線のズシリと胸に響く生演奏は、重低音好きの若者にも強く刺さる迫力です。終演後には人形遣いと直接触れ合える体験コーナーもあり、伝統の奥深さを存分に楽しめます。",
       stars: { area: "★★★", budget: "★★★", date: "★★☆", who: "★★★" },
       ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
-      link: "https://www.city.amagasaki.hyogo.jp/manabu/art/1018501/1018506.html",
+      link: "https://www.city.amagasaki.hyogo.jp/manabu/art/chikamatu/055chikamatsu_sato.html",
       venue: "尼崎市 近松記念館",
       mapEmbed:
         "https://maps.google.com/maps?q=%E8%BF%91%E6%9D%BE%E8%A8%98%E5%BF%B5%E9%A4%A8&z=15&output=embed",
@@ -47,7 +47,7 @@ const performancesData: Record<string, PerformanceItem[]> = {
       desc: "駅直結の最新劇場で楽しむ三人遣いの神業ステージ。愛憎劇や人間の葛藤を驚くほど情熱的かつリアルに描き出し、現代のサスペンスドラマ以上に心を揺さぶられます。初めての方でもあらすじが手にとるようにわかる無料プログラムの配布やイヤホンガイドが充実。平日夜や土日にも上演され、仕事帰りや休日に1人でふらりと贅沢な非日常を味わうのにぴったりです。",
       stars: { area: "★☆☆", budget: "★★☆", date: "★★★", who: "★★★" },
       ratings: { area: "kanto", budget: "standard", date: "weekday", who: "alone" },
-      link: "https://www.t-1010.jp/",
+      link: "https://www.t1010.jp/",
       venue: "シアター1010（北千住駅直結）",
       mapEmbed:
         "https://maps.google.com/maps?q=%E3%82%B7%E3%82%A2%E3%82%BF%E3%83%BC1010&z=15&output=embed",
@@ -60,7 +60,7 @@ const performancesData: Record<string, PerformanceItem[]> = {
       desc: "大阪・谷町四丁目に佇む歴史ある能舞台で開催される、初心者歓迎の特別鑑賞シリーズです。鬼や怨霊が登場するダイナミックな人気曲を取り上げ、開演前にはわかりやすい事前レクチャーを実施。研ぎ澄まされた静寂のなか、笛の澄んだ音と鼓の響きが会場全体を神秘的な空間へと変貌させます。敷居の高さを感じさせないアットホームな雰囲気で、1人でも気軽に本物の幽玄美に浸れます。",
       stars: { area: "★★★", budget: "★★★", date: "★★★", who: "★★★" },
       ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
-      link: "http://www.noh-otsuki.com/",
+      link: "https://noh-kyogen.com/",
       venue: "大槻能楽堂（大阪・谷町四丁目）",
       mapEmbed:
         "https://maps.google.com/maps?q=%E5%A4%A7%E6%A7%BB%E8%83%BD%E6%A5%BD%E5%A0%82&z=15&output=embed",
@@ -71,7 +71,7 @@ const performancesData: Record<string, PerformanceItem[]> = {
       desc: "千駄ヶ谷の緑豊かな庭園に囲まれた国立能楽堂で、世界最古の舞台芸術の真髄に触れる入門プログラムです。全席に座席パーソナル字幕システムが設置されており、セリフや舞いの意味をリアルタイムで追うことができます。角度によって泣き顔にも笑い顔にも見える能面の不思議な美しさに誰もが息を呑むはず。二千円台〜のお手軽な価格設定で、休日のひとり鑑賞に絶大な支持を得ています。",
       stars: { area: "★☆☆", budget: "★★★", date: "★★★", who: "★★★" },
       ratings: { area: "kanto", budget: "cheap", date: "weekend", who: "friends" },
-      link: "https://www.ntj.jac.go.jp/noh.html",
+      link: "https://www.ntj.jac.go.jp/nou/",
       venue: "国立能楽堂（千駄ヶ谷）",
       mapEmbed:
         "https://maps.google.com/maps?q=%E5%9B%BD%E7%AB%8B%E8%83%BD%E6%A5%BD%E5%A0%82&z=15&output=embed",
@@ -82,7 +82,7 @@ const performancesData: Record<string, PerformanceItem[]> = {
       desc: "日本最大規模を誇る壮大な檜舞台で、六百五十年の伝統を体感できる特別公演です。ダークファンタジーの深淵を覗くような怨霊の舞いや、妖艶な神仏の降臨シーンを豪華な装束とともに堪能できます。館内には能面や装束の展示室も併設されており、観劇前後にじっくりと伝統文化の世界に触れることが可能。名古屋城正門前の落ち着いたロケーションで、心を研ぎ澄ます静かな時間を過ごせます。",
       stars: { area: "★★☆", budget: "★★☆", date: "★★☆", who: "★★★" },
       ratings: { area: "tokai", budget: "standard", date: "month", who: "alone" },
-      link: "https://www.bunka-hinkaku.or.jp/",
+      link: "https://www.bunka758.or.jp/facility/nougakudo/",
       venue: "名古屋能楽堂（名古屋城正門前）",
       mapEmbed:
         "https://maps.google.com/maps?q=%E5%90%8D%E5%8F%A4%E5%B1%8B%E8%83%BD%E6%A5%BD%E5%A0%82&z=15&output=embed",
@@ -95,7 +95,7 @@ const performancesData: Record<string, PerformanceItem[]> = {
       desc: "歌舞伎発祥の地・京都四条河原町の南座で、好きな幕だけを千円台〜で気軽に見られる夢のようなチケットです。歴史ある登録有形文化財の劇場に足を踏み入れれば、江戸の熱気がそのまま蘇ったようなワクワク感に包まれます。迫真の『見得』やド派手な大立ち回り、豪華絢爛な衣装の美しさを短時間で贅沢に満喫。祇園観光の合間に1人でサクッと観劇する若者にも絶大な人気を誇ります。",
       stars: { area: "★★★", budget: "★★★", date: "★★★", who: "★★★" },
       ratings: { area: "kansai", budget: "cheap", date: "month", who: "alone" },
-      link: "https://www.kabuki-bito.jp/theaters/minamiza/",
+      link: "https://www.kabuki-bito.jp/theaters/kyoto/",
       venue: "南座（京都・祇園四条）",
       mapEmbed: "https://maps.google.com/maps?q=%E5%8D%97%E5%BA%A7&z=15&output=embed",
     },
@@ -116,7 +116,7 @@ const performancesData: Record<string, PerformanceItem[]> = {
       desc: "若手花形俳優たちが熱い情熱をぶつけ合う、若者・初心者人気ナンバーワンの登竜門的公演です。客席と舞台の距離が近く、花道を疾走する迫力の演技にお客さんの一体感ある歓声が飛び交います。開演前には俳優自身による見どころ解説コーナーもあり、歌舞伎のルールが楽しく学べる工夫が満載。下町浅草のグルメや観光と合わせて、エネルギッシュな一日を思いきり楽しめます。",
       stars: { area: "★☆☆", budget: "★★☆", date: "★★★", who: "★★☆" },
       ratings: { area: "kanto", budget: "standard", date: "weekend", who: "friends" },
-      link: "https://www.asakusa-kabuki.jp/",
+      link: "https://asakusa-koukaidou.net/",
       venue: "浅草公会堂（浅草駅徒歩5分）",
       mapEmbed:
         "https://maps.google.com/maps?q=%E6%B5%85%E8%8D%89%E5%85%AC%E4%BC%9A%E5%A0%82&z=15&output=embed",
