@@ -617,7 +617,7 @@ export function MieChallenge({ className = "", children }: MieChallengeProps = {
                   <div className="w-full aspect-[3/4] rounded-lg overflow-hidden shadow-md bg-[#c2b59b] border border-[#8c7863] flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=400"
+                      src="/images/mie_sample.png"
                       alt="お手本"
                       className="w-full h-full object-cover"
                     />
