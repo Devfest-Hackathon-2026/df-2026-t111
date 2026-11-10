@@ -314,25 +314,6 @@ export function ArtDetail({ artId }: { artId: PerformingArt }) {
         </StageSection>
       )}
 
-      {/* 初心者の Q&A */}
-      <StageSection title="初心者の Q&A">
-        <div className="space-y-2">
-          {faqs.map((faq) => (
-            <details key={faq.id} className="bg-[#f4efe6] border border-[#8c7863] rounded-2xl p-4 group">
-              <summary className="font-extrabold cursor-pointer list-none flex items-center justify-between text-[#2a241e]">
-                <span>Q. {faq.question}</span>
-                <span className="text-xs font-bold text-[#6b5c4d] group-open:rotate-180 transition-transform">
-                  ▼
-                </span>
-              </summary>
-              <p className="mt-2.5 pt-2 leading-relaxed text-sm border-t border-[#8c7863]/20 text-[#3b332a]">
-                A. {faq.answer}
-              </p>
-            </details>
-          ))}
-        </div>
-      </StageSection>
-
       {/* ========================================= */}
       {/* 本物を見に行こう（小松菜さんデザイン反映） */}
       {/* ========================================= */}
@@ -449,6 +430,25 @@ export function ArtDetail({ artId }: { artId: PerformingArt }) {
         >
           ♥ 行きたいリストを見る（{wishedIds.length}件保存中）
         </Link>
+      </StageSection>
+
+      {/* 初心者の Q&A */}
+      <StageSection title="初心者の Q&A">
+        <div className="space-y-2">
+          {faqs.map((faq) => (
+            <details key={faq.id} className="bg-[#f4efe6] border border-[#8c7863] rounded-2xl p-4 group">
+              <summary className="font-extrabold cursor-pointer list-none flex items-center justify-between text-[#2a241e]">
+                <span>Q. {faq.question}</span>
+                <span className="text-xs font-bold text-[#6b5c4d] group-open:rotate-180 transition-transform">
+                  ▼
+                </span>
+              </summary>
+              <p className="mt-2.5 pt-2 leading-relaxed text-sm border-t border-[#8c7863]/20 text-[#3b332a]">
+                A. {faq.answer}
+              </p>
+            </details>
+          ))}
+        </div>
       </StageSection>
 
       {/* ほかの伝統芸能 */}
